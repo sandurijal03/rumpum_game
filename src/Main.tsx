@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import "./Main.css";
+import winMusicSrc from "./win-music.mp4";
 
 type DrawHistoryItem = {
   code: string;
@@ -657,7 +658,7 @@ const Main: React.FC = () => {
         preload="auto"
         onEnded={() => setShowStopMusic(false)}
       >
-        <source src="/win-music.mp4" type="audio/mp4" />
+        <source src={winMusicSrc} type="audio/mp4" />
       </audio>
     </>
   );
