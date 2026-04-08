@@ -39,6 +39,7 @@ const Main: React.FC = () => {
   const [showStopMusic, setShowStopMusic] = React.useState<boolean>(false);
   const [celebrating, setCelebrating] = React.useState<boolean>(false);
   const [winColor, setWinColor] = React.useState<string>("#ffff00");
+  const [floatingWinner, setFloatingWinner] = React.useState<string>("");
 
   const [minVal, setMinVal] = React.useState<string>("1");
   const [maxVal, setMaxVal] = React.useState<string>("9999999");
@@ -46,6 +47,8 @@ const Main: React.FC = () => {
     "RUMPUM LUCKY DRAW 2082",
   );
   const [spinSpeed, setSpinSpeed] = React.useState<string>("80");
+  const [winnerFloatDurationMs, setWinnerFloatDurationMs] =
+    React.useState<string>("3200");
 
   const audioContextRef = React.useRef<AudioContext | null>(null);
   const winMusicRef = React.useRef<HTMLAudioElement | null>(null);
@@ -119,6 +122,14 @@ const Main: React.FC = () => {
     },
     [reelCount],
   );
+
+  const winnerFloatDuration = React.useMemo(() => {
+    const parsed = Number.parseInt(winnerFloatDurationMs, 10);
+    if (Number.isNaN(parsed)) {
+      return 3200;
+    }
+    return Math.min(12000, Math.max(1000, parsed));
+  }, [winnerFloatDurationMs]);
 
   React.useEffect(() => {
     setMidDigits((previousDigits) => {
@@ -251,6 +262,26 @@ const Main: React.FC = () => {
 
     setMaxVal(String(normalized));
   }, []);
+
+  const handleWinnerFloatDurationChange = React.useCallback(
+    (rawValue: string): void => {
+      if (rawValue === "") {
+        setWinnerFloatDurationMs("");
+        return;
+      }
+
+      const parsed = Number(rawValue);
+      if (!Number.isFinite(parsed)) {
+        setStatus("⚠ Please enter a valid winner float duration.");
+        return;
+      }
+
+      const normalized = Math.floor(parsed);
+      const clamped = Math.min(12000, Math.max(1000, normalized));
+      setWinnerFloatDurationMs(String(clamped));
+    },
+    [],
+  );
 
   const pickWinner = React.useCallback((): number => {
     const { min, max } = getRange();
@@ -429,6 +460,14 @@ const Main: React.FC = () => {
       setWinNumber(code);
       setWinMeta(`Draw #${drawCountRef.current}  |  ${timeString}`);
       setStatus(`✅ Winner: ${code} — Removed from all future draws`);
+      setFloatingWinner(code);
+
+      const hideFloatingWinnerId = window.setTimeout(() => {
+        setFloatingWinner("");
+        clearTrackedTimeout(hideFloatingWinnerId);
+      }, winnerFloatDuration);
+      addTimeout(hideFloatingWinnerId);
+
       setHistory((previousHistory) => {
         const nextHistory = [
           { code, title, time: timeString },
@@ -458,6 +497,7 @@ const Main: React.FC = () => {
     stopWinMusic,
     normalizeToDigits,
     maxVal,
+    winnerFloatDuration,
   ]);
 
   const copyResult = React.useCallback(() => {
@@ -485,8 +525,58 @@ const Main: React.FC = () => {
     ? normalizeToDigits(midDigits.join(""))
     : normalizeToDigits(winNumber);
 
+  const celebrationBursts = React.useMemo(
+    () =>
+      Array.from({ length: 28 }, (_, index) => ({
+        left: (index * 37) % 100,
+        delay: (index % 9) * 90,
+        duration: 2200 + (index % 6) * 180,
+        size: 8 + (index % 5) * 3,
+        color:
+          index % 3 === 0 ? "#ffcc00" : index % 3 === 1 ? "#ff6600" : "#ffff66",
+      })),
+    [],
+  );
+
   return (
     <>
+      {floatingWinner ? (
+        <div
+          className="winner-float-overlay"
+          aria-live="polite"
+          style={{ animationDuration: `${winnerFloatDuration}ms` }}
+        >
+          <div className="winner-float-label">WINNER</div>
+          <div
+            className="winner-float-number"
+            style={{ animationDuration: `${winnerFloatDuration}ms` }}
+          >
+            {floatingWinner}
+          </div>
+        </div>
+      ) : null}
+
+      {celebrating ? (
+        <div className="screen-celebration" aria-hidden="true">
+          <div className="screen-celebration-glow" />
+          <div className="screen-celebration-flash" />
+          {celebrationBursts.map((burst, index) => (
+            <span
+              className="screen-confetti"
+              key={`burst-${index}`}
+              style={{
+                left: `${burst.left}%`,
+                animationDelay: `${burst.delay}ms`,
+                animationDuration: `${burst.duration}ms`,
+                width: `${burst.size}px`,
+                height: `${burst.size * 1.8}px`,
+                backgroundColor: burst.color,
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
+
       <div className="app">
         <div className="header">
           <h1>🎰 {eventTitle}🎰</h1>
@@ -614,6 +704,38 @@ const Main: React.FC = () => {
                 min={30}
                 max={300}
                 onChange={(event) => setSpinSpeed(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="field-row">
+            <div className="field">
+              <label htmlFor="winnerFloatDurationMs">
+                Winner Float Duration (ms)
+              </label>
+              <input
+                id="winnerFloatDurationMs"
+                type="number"
+                value={winnerFloatDurationMs}
+                min={1000}
+                max={12000}
+                onChange={(event) =>
+                  handleWinnerFloatDurationChange(event.target.value)
+                }
+                onBlur={() => {
+                  if (winnerFloatDurationMs === "") {
+                    setWinnerFloatDurationMs("3200");
+                  }
+                }}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="winnerFloatDurationPreview">Preview</label>
+              <input
+                id="winnerFloatDurationPreview"
+                type="text"
+                value={`${(winnerFloatDuration / 1000).toFixed(1)} seconds`}
+                readOnly
               />
             </div>
           </div>
