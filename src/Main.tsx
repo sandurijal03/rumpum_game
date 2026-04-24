@@ -997,44 +997,31 @@ const Main: React.FC = () => {
       ) : null}
 
       <div className="app">
-        {/* <header className="hero">
-          <img
-            className="hero-side-image hero-side-image-left"
-            src={rumpumChickenSrc}
-            alt="Rumpum Chicken"
-          />
-          <img
-            className="hero-side-image hero-side-image-right"
-            src={rumpumVegSrc}
-            alt="Rumpum Veg"
-          />
-
-          <div className="hero-sub-image-wrap">
-            <img
-              className="hero-sub-image"
-              src={rumpumRamailoSrc}
-              alt="Rumpum Ramailo"
-            />
-          </div>
-
-          <p className="hero-kicker">Nepal&apos;s Most Loved Instant Noodles</p>
-          <h1>{eventTitle}</h1>
-        </header> */}
+        <img
+          className="app-chicken-noodle"
+          src={rumpumChickenSrc}
+          alt="Rumpum Chicken Noodle"
+        />
+        <img
+          className="app-veg-noodle"
+          src={rumpumVegSrc}
+          alt="Rumpum Veg Noodle"
+        />
 
         <div className="single-screen-main">
           <section
             id="draw-machine"
             className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
           >
-            {/* <div className="hero-sub-image-wrap">
-              <img
-                className="hero-sub-image"
-                src={rumpumRamailoSrc}
-                alt="Rumpum Ramailo"
-              />
-            </div> */}
             <div className="section-heading">
-              <h2>{eventTitle}</h2>
+              <div className="section-heading-main">
+                <h2>{eventTitle}</h2>
+                <img
+                  className="section-brand-image section-brand-image-right"
+                  src={rumpumRamailoSrc}
+                  alt="Rumpum Ramailo"
+                />
+              </div>
               <p>
                 Run transparent, high-energy winner announcements for your brand
                 campaign.
@@ -1048,12 +1035,6 @@ const Main: React.FC = () => {
             </div>
 
             <div className="reels-stage">
-              <img
-                className="reel-noodle reel-noodle-left"
-                src={rumpumChickenSrc}
-                alt="Rumpum Chicken Noodle"
-              />
-
               <div
                 className="reels"
                 style={{
@@ -1071,12 +1052,6 @@ const Main: React.FC = () => {
                   );
                 })}
               </div>
-
-              <img
-                className="reel-noodle reel-noodle-right"
-                src={rumpumVegSrc}
-                alt="Rumpum Veg Noodle"
-              />
             </div>
 
             <div className="machine-lights">
@@ -1152,7 +1127,7 @@ const Main: React.FC = () => {
                       value={minVal}
                       min={0}
                       max={MAX_DRAW_NUMBER}
-                      disabled={isSpinning}
+                      disabled={true}
                       onChange={(event) => setMinVal(event.target.value)}
                     />
                   </div>
@@ -1166,7 +1141,7 @@ const Main: React.FC = () => {
                       value={maxVal}
                       min={0}
                       max={MAX_DRAW_NUMBER}
-                      disabled={isSpinning}
+                      disabled={true}
                       onChange={(event) =>
                         handleMaxValueChange(event.target.value)
                       }
