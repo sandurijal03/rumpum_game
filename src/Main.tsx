@@ -1,8 +1,8 @@
 import * as React from "react";
 
 import "./Main.css";
+import heroImageSrc from "./hero.jpeg";
 import rumpumChickenSrc from "./Rumpum Chicken.png";
-import rumpumRamailoSrc from "./rumpum_ramailo.png";
 import rumpumVegSrc from "./rumpum veg.png";
 import winMusicSrc from "./win-music.mp4";
 
@@ -588,11 +588,7 @@ const Main: React.FC = () => {
               src={rumpumChickenSrc}
               alt="Rumpum Chicken"
             />
-            <img
-              className="top-image"
-              src={rumpumRamailoSrc}
-              alt="Rumpum Ramailo"
-            />
+            <img className="top-image" src={heroImageSrc} alt="Rumpum Hero" />
             <img
               className="top-side-image"
               src={rumpumVegSrc}
