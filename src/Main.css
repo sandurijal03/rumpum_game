@@ -55,6 +55,27 @@ body::before {
   padding: 26px clamp(16px, 3vw, 36px) 30px;
   box-shadow: var(--shadow-strong);
   animation: sectionRise 620ms cubic-bezier(0.2, 0.85, 0.3, 1) both;
+  position: relative;
+  overflow: visible;
+}
+
+.hero-side-image {
+  position: absolute;
+  top: 52%;
+  width: min(19vw, 170px);
+  height: auto;
+  transform: translateY(-50%);
+  filter: drop-shadow(0 14px 20px rgba(69, 35, 12, 0.24));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-side-image-left {
+  left: clamp(-88px, -7vw, -44px);
+}
+
+.hero-side-image-right {
+  right: clamp(-88px, -7vw, -44px);
 }
 
 .top-image-wrap {
@@ -759,6 +780,19 @@ body::before {
     padding: 20px 16px 24px;
   }
 
+  .hero-side-image {
+    width: min(22vw, 120px);
+    top: 45%;
+  }
+
+  .hero-side-image-left {
+    left: -28px;
+  }
+
+  .hero-side-image-right {
+    right: -28px;
+  }
+
   .top-image {
     width: min(54vw, 300px);
   }
@@ -779,6 +813,10 @@ body::before {
 
   .top-image-wrap {
     gap: 8px;
+  }
+
+  .hero-side-image {
+    display: none;
   }
 
   .top-image {

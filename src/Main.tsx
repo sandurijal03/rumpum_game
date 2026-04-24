@@ -48,7 +48,7 @@ const Main: React.FC = () => {
   const [minVal, setMinVal] = React.useState<string>("1");
   const [maxVal, setMaxVal] = React.useState<string>("1190000");
   const [eventTitle, setEventTitle] = React.useState<string>(
-    "RUMPUM LUCKY DRAW 2082",
+    "RUMPUM LUCKY DRAW 2083",
   );
   const [spinSpeed, setSpinSpeed] = React.useState<string>("80");
   const [winnerFloatDurationMs, setWinnerFloatDurationMs] =
@@ -583,18 +583,19 @@ const Main: React.FC = () => {
 
       <div className="app">
         <header className="hero">
+          <img
+            className="hero-side-image hero-side-image-left"
+            src={rumpumChickenSrc}
+            alt="Rumpum Chicken"
+          />
+          <img
+            className="hero-side-image hero-side-image-right"
+            src={rumpumVegSrc}
+            alt="Rumpum Veg"
+          />
+
           <div className="top-image-wrap">
-            <img
-              className="top-side-image"
-              src={rumpumChickenSrc}
-              alt="Rumpum Chicken"
-            />
             <img className="top-image" src={heroImageSrc} alt="Rumpum Hero" />
-            <img
-              className="top-side-image"
-              src={rumpumVegSrc}
-              alt="Rumpum Veg"
-            />
           </div>
 
           <div className="hero-sub-image-wrap">
