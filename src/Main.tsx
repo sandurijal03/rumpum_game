@@ -1004,14 +1004,9 @@ const Main: React.FC = () => {
             className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
           >
             <div className="section-heading">
-              {/* <img
-                className="section-brand-image ramailo-header"
-                src={rumpumRamailoSrc}
-                alt="Rumpum Ramailo"
-              /> */}
               <div className="section-heading-main">
                 <img
-                  className="section-brand-image ramailo"
+                  className="section-brand-image af"
                   src={af}
                   alt="Rumpum Ramailo"
                 />
@@ -1034,10 +1029,6 @@ const Main: React.FC = () => {
                   width={"100px"}
                 />
               </div>
-              <p>
-                Run transparent, high-energy winner announcements for your brand
-                campaign.
-              </p>
             </div>
 
             <div className="machine-lights">
