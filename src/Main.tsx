@@ -1113,7 +1113,7 @@ const Main: React.FC = () => {
               </button> */}
             </div>
 
-            <div className="status">{status}</div>
+            {/* <div className="status">{status}</div> */}
 
             <div className="panel-grid">
               <section className="settings">
@@ -1129,6 +1129,7 @@ const Main: React.FC = () => {
                       max={MAX_DRAW_NUMBER}
                       disabled={true}
                       onChange={(event) => setMinVal(event.target.value)}
+                      style={{ fontSize: "2rem" }}
                     />
                   </div>
                   <div className="field">
@@ -1145,6 +1146,7 @@ const Main: React.FC = () => {
                       onChange={(event) =>
                         handleMaxValueChange(event.target.value)
                       }
+                      style={{ fontSize: "2rem" }}
                     />
                   </div>
                 </div>
