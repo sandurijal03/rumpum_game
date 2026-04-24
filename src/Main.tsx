@@ -193,43 +193,59 @@ const Main: React.FC = () => {
     }
 
     const now = audioContext.currentTime;
-    const pitchJitter = 1 + (Math.random() - 0.5) * 0.05;
+    const pitchJitter = 1 + (Math.random() - 0.5) * 0.04;
 
     const attackOsc = audioContext.createOscillator();
     const attackGain = audioContext.createGain();
     attackOsc.type = "square";
-    attackOsc.frequency.setValueAtTime(1880 * pitchJitter, now);
+    attackOsc.frequency.setValueAtTime(2200 * pitchJitter, now);
     attackOsc.frequency.exponentialRampToValueAtTime(
-      980 * pitchJitter,
-      now + 0.02,
+      1200 * pitchJitter,
+      now + 0.016,
     );
     attackGain.gain.setValueAtTime(0.0001, now);
-    attackGain.gain.exponentialRampToValueAtTime(0.085, now + 0.003);
-    attackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.024);
+    attackGain.gain.exponentialRampToValueAtTime(0.11, now + 0.002);
+    attackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
     attackOsc.connect(attackGain);
     attackGain.connect(audioContext.destination);
     attackOsc.start(now);
-    attackOsc.stop(now + 0.026);
+    attackOsc.stop(now + 0.02);
 
     const bodyOsc = audioContext.createOscillator();
     const bodyGain = audioContext.createGain();
     bodyOsc.type = "triangle";
-    bodyOsc.frequency.setValueAtTime(980 * pitchJitter, now);
+    bodyOsc.frequency.setValueAtTime(1150 * pitchJitter, now);
     bodyOsc.frequency.exponentialRampToValueAtTime(
-      640 * pitchJitter,
-      now + 0.035,
+      720 * pitchJitter,
+      now + 0.024,
     );
     bodyGain.gain.setValueAtTime(0.0001, now);
-    bodyGain.gain.exponentialRampToValueAtTime(0.06, now + 0.005);
-    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+    bodyGain.gain.exponentialRampToValueAtTime(0.042, now + 0.004);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.027);
     bodyOsc.connect(bodyGain);
     bodyGain.connect(audioContext.destination);
     bodyOsc.start(now);
-    bodyOsc.stop(now + 0.045);
+    bodyOsc.stop(now + 0.03);
+
+    const pingOsc = audioContext.createOscillator();
+    const pingGain = audioContext.createGain();
+    pingOsc.type = "sine";
+    pingOsc.frequency.setValueAtTime(2700 * pitchJitter, now);
+    pingOsc.frequency.exponentialRampToValueAtTime(
+      1850 * pitchJitter,
+      now + 0.01,
+    );
+    pingGain.gain.setValueAtTime(0.0001, now);
+    pingGain.gain.exponentialRampToValueAtTime(0.03, now + 0.0015);
+    pingGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+    pingOsc.connect(pingGain);
+    pingGain.connect(audioContext.destination);
+    pingOsc.start(now);
+    pingOsc.stop(now + 0.013);
 
     const noiseBuffer = audioContext.createBuffer(
       1,
-      Math.floor(audioContext.sampleRate * 0.018),
+      Math.floor(audioContext.sampleRate * 0.014),
       audioContext.sampleRate,
     );
     const channelData = noiseBuffer.getChannelData(0);
@@ -245,21 +261,21 @@ const Main: React.FC = () => {
 
     noise.buffer = noiseBuffer;
     highPass.type = "highpass";
-    highPass.frequency.setValueAtTime(980, now);
+    highPass.frequency.setValueAtTime(1300, now);
     bandPass.type = "bandpass";
-    bandPass.frequency.setValueAtTime(2100, now);
-    bandPass.Q.value = 1.2;
+    bandPass.frequency.setValueAtTime(2550, now);
+    bandPass.Q.value = 1.35;
 
     noiseGain.gain.setValueAtTime(0.0001, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.05, now + 0.003);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.016);
+    noiseGain.gain.exponentialRampToValueAtTime(0.042, now + 0.0025);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
 
     noise.connect(highPass);
     highPass.connect(bandPass);
     bandPass.connect(noiseGain);
     noiseGain.connect(audioContext.destination);
     noise.start(now);
-    noise.stop(now + 0.018);
+    noise.stop(now + 0.014);
   }, [getAudioContext]);
 
   const playReelStop = React.useCallback(() => {
@@ -323,70 +339,110 @@ const Main: React.FC = () => {
     const masterGain = audioContext.createGain();
     masterGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
     masterGain.gain.exponentialRampToValueAtTime(
-      0.86,
+      0.74,
       audioContext.currentTime + 0.06,
     );
-    masterGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + 2.35);
+    masterGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + 3.2);
     masterGain.connect(audioContext.destination);
 
-    celebrationNodesRef.current = [masterGain];
+    const shimmerDelay = audioContext.createDelay();
+    shimmerDelay.delayTime.setValueAtTime(0.16, baseTime);
+    const shimmerFeedback = audioContext.createGain();
+    shimmerFeedback.gain.setValueAtTime(0.2, baseTime);
+    const shimmerFilter = audioContext.createBiquadFilter();
+    shimmerFilter.type = "lowpass";
+    shimmerFilter.frequency.setValueAtTime(3200, baseTime);
 
-    const tonePattern = [
-      {
-        frequency: 523.25,
-        offset: 0.0,
-        duration: 0.22,
-        type: "sawtooth" as OscillatorType,
-        gain: 0.34,
-      },
+    masterGain.connect(shimmerDelay);
+    shimmerDelay.connect(shimmerFilter);
+    shimmerFilter.connect(audioContext.destination);
+    shimmerDelay.connect(shimmerFeedback);
+    shimmerFeedback.connect(shimmerDelay);
+
+    celebrationNodesRef.current = [
+      masterGain,
+      shimmerDelay,
+      shimmerFeedback,
+      shimmerFilter,
+    ];
+
+    const fanfarePattern = [
       {
         frequency: 659.25,
-        offset: 0.13,
-        duration: 0.24,
-        type: "triangle" as OscillatorType,
-        gain: 0.3,
-      },
-      {
-        frequency: 783.99,
-        offset: 0.28,
-        duration: 0.26,
-        type: "triangle" as OscillatorType,
-        gain: 0.29,
-      },
-      {
-        frequency: 1046.5,
-        offset: 0.45,
-        duration: 0.4,
-        type: "sine" as OscillatorType,
-        gain: 0.26,
-      },
-      {
-        frequency: 783.99,
-        offset: 0.88,
+        offset: 0.0,
         duration: 0.2,
+        gain: 0.22,
         type: "triangle" as OscillatorType,
-        gain: 0.2,
+      },
+      {
+        frequency: 783.99,
+        offset: 0.14,
+        duration: 0.2,
+        gain: 0.22,
+        type: "triangle" as OscillatorType,
+      },
+      {
+        frequency: 987.77,
+        offset: 0.28,
+        duration: 0.22,
+        gain: 0.24,
+        type: "triangle" as OscillatorType,
       },
       {
         frequency: 1174.66,
-        offset: 1.03,
-        duration: 0.28,
+        offset: 0.45,
+        duration: 0.24,
+        gain: 0.25,
+        type: "sawtooth" as OscillatorType,
+      },
+      {
+        frequency: 1318.51,
+        offset: 0.68,
+        duration: 0.3,
+        gain: 0.24,
         type: "sine" as OscillatorType,
-        gain: 0.19,
+      },
+      {
+        frequency: 1567.98,
+        offset: 0.93,
+        duration: 0.34,
+        gain: 0.23,
+        type: "sine" as OscillatorType,
+      },
+      {
+        frequency: 1318.51,
+        offset: 1.35,
+        duration: 0.24,
+        gain: 0.2,
+        type: "triangle" as OscillatorType,
+      },
+      {
+        frequency: 1760.0,
+        offset: 1.56,
+        duration: 0.36,
+        gain: 0.22,
+        type: "sine" as OscillatorType,
+      },
+      {
+        frequency: 1975.53,
+        offset: 1.95,
+        duration: 0.42,
+        gain: 0.24,
+        type: "sine" as OscillatorType,
       },
     ];
 
-    tonePattern.forEach((tone) => {
+    fanfarePattern.forEach((tone, index) => {
       const oscillator = audioContext.createOscillator();
       const gain = audioContext.createGain();
 
       oscillator.type = tone.type;
       oscillator.frequency.setValueAtTime(
-        tone.frequency,
+        tone.frequency * (1 + (Math.random() - 0.5) * 0.01),
         baseTime + tone.offset,
       );
       oscillator.frequency.exponentialRampToValueAtTime(
-        tone.frequency * 1.03,
+        tone.frequency * (index % 2 === 0 ? 1.02 : 0.99),
         baseTime + tone.offset + tone.duration,
       );
 
@@ -408,43 +464,132 @@ const Main: React.FC = () => {
 
       oscillator.start(baseTime + tone.offset);
       oscillator.stop(baseTime + tone.offset + tone.duration);
+
+      const harmonyOsc = audioContext.createOscillator();
+      const harmonyGain = audioContext.createGain();
+      harmonyOsc.type = "sine";
+      harmonyOsc.frequency.setValueAtTime(
+        tone.frequency / 2,
+        baseTime + tone.offset,
+      );
+      harmonyGain.gain.setValueAtTime(0.0001, baseTime + tone.offset);
+      harmonyGain.gain.exponentialRampToValueAtTime(
+        tone.gain * 0.28,
+        baseTime + tone.offset + 0.04,
+      );
+      harmonyGain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        baseTime + tone.offset + tone.duration,
+      );
+
+      harmonyOsc.connect(harmonyGain);
+      harmonyGain.connect(masterGain);
+
+      celebrationNodesRef.current.push(harmonyGain);
+      celebrationSourcesRef.current.push(harmonyOsc);
+
+      harmonyOsc.start(baseTime + tone.offset);
+      harmonyOsc.stop(baseTime + tone.offset + tone.duration);
     });
 
-    const sparkleBurstOffsets = [0.55, 0.85, 1.15, 1.42];
-    sparkleBurstOffsets.forEach((offset, index) => {
+    const bellNotes = [1567.98, 1760.0, 2093.0, 2349.32];
+    bellNotes.forEach((frequency, index) => {
+      const bellOffset = 0.5 + index * 0.36;
+      const bell = audioContext.createOscillator();
+      const bellGain = audioContext.createGain();
+      bell.type = "sine";
+      bell.frequency.setValueAtTime(frequency, baseTime + bellOffset);
+      bell.frequency.exponentialRampToValueAtTime(
+        frequency * 0.985,
+        baseTime + bellOffset + 0.5,
+      );
+      bellGain.gain.setValueAtTime(0.0001, baseTime + bellOffset);
+      bellGain.gain.exponentialRampToValueAtTime(
+        0.19,
+        baseTime + bellOffset + 0.03,
+      );
+      bellGain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        baseTime + bellOffset + 0.48,
+      );
+
+      bell.connect(bellGain);
+      bellGain.connect(masterGain);
+
+      celebrationNodesRef.current.push(bellGain);
+      celebrationSourcesRef.current.push(bell);
+
+      bell.start(baseTime + bellOffset);
+      bell.stop(baseTime + bellOffset + 0.5);
+    });
+
+    const fireworkBurstOffsets = [0.62, 1.18, 1.74, 2.28];
+    fireworkBurstOffsets.forEach((offset, index) => {
+      const whistle = audioContext.createOscillator();
+      const whistleGain = audioContext.createGain();
+      whistle.type = "triangle";
+      whistle.frequency.setValueAtTime(
+        420 + index * 60,
+        baseTime + offset - 0.09,
+      );
+      whistle.frequency.exponentialRampToValueAtTime(
+        1400 + index * 120,
+        baseTime + offset,
+      );
+      whistleGain.gain.setValueAtTime(0.0001, baseTime + offset - 0.09);
+      whistleGain.gain.exponentialRampToValueAtTime(
+        0.06,
+        baseTime + offset - 0.03,
+      );
+      whistleGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + offset);
+
+      whistle.connect(whistleGain);
+      whistleGain.connect(masterGain);
+
+      celebrationNodesRef.current.push(whistleGain);
+      celebrationSourcesRef.current.push(whistle);
+
+      whistle.start(baseTime + offset - 0.09);
+      whistle.stop(baseTime + offset + 0.01);
+
       const buffer = audioContext.createBuffer(
         1,
-        Math.floor(audioContext.sampleRate * 0.2),
+        Math.floor(audioContext.sampleRate * 0.24),
         audioContext.sampleRate,
       );
       const channelData = buffer.getChannelData(0);
       for (let i = 0; i < channelData.length; i += 1) {
         channelData[i] =
-          (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.4);
+          (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.1);
       }
 
       const noise = audioContext.createBufferSource();
       noise.buffer = buffer;
 
+      const highPass = audioContext.createBiquadFilter();
+      highPass.type = "highpass";
+      highPass.frequency.setValueAtTime(700, baseTime + offset);
+
       const bandPass = audioContext.createBiquadFilter();
       bandPass.type = "bandpass";
-      bandPass.frequency.setValueAtTime(1600 + index * 420, baseTime + offset);
-      bandPass.Q.value = 1.4;
+      bandPass.frequency.setValueAtTime(1750 + index * 460, baseTime + offset);
+      bandPass.Q.value = 1.25;
 
       const gain = audioContext.createGain();
       gain.gain.setValueAtTime(0.0001, baseTime + offset);
-      gain.gain.exponentialRampToValueAtTime(0.12, baseTime + offset + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, baseTime + offset + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.13, baseTime + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, baseTime + offset + 0.24);
 
-      noise.connect(bandPass);
+      noise.connect(highPass);
+      highPass.connect(bandPass);
       bandPass.connect(gain);
       gain.connect(masterGain);
 
-      celebrationNodesRef.current.push(bandPass, gain);
+      celebrationNodesRef.current.push(highPass, bandPass, gain);
       celebrationSourcesRef.current.push(noise);
 
       noise.start(baseTime + offset);
-      noise.stop(baseTime + offset + 0.2);
+      noise.stop(baseTime + offset + 0.24);
     });
 
     setShowStopMusic(true);
@@ -453,7 +598,7 @@ const Main: React.FC = () => {
       setShowStopMusic(false);
       celebrationHideStopTimeoutRef.current = null;
       clearTrackedTimeout(hideStopMusicId);
-    }, 2600);
+    }, 3600);
     celebrationHideStopTimeoutRef.current = hideStopMusicId;
     addTimeout(hideStopMusicId);
   }, [getAudioContext, stopWinMusic]);
