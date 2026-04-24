@@ -20,7 +20,7 @@ declare global {
 
 const DEFAULT_REEL_COUNT = 7;
 const MAX_REEL_COUNT = 10;
-const MAX_DRAW_NUMBER = 9999999999;
+const MAX_DRAW_NUMBER = 1190000;
 const BULB_COUNT = 14;
 
 const Main: React.FC = () => {
@@ -45,7 +45,7 @@ const Main: React.FC = () => {
   const [floatingWinner, setFloatingWinner] = React.useState<string>("");
 
   const [minVal, setMinVal] = React.useState<string>("1");
-  const [maxVal, setMaxVal] = React.useState<string>("9999999");
+  const [maxVal, setMaxVal] = React.useState<string>("1190000");
   const [eventTitle, setEventTitle] = React.useState<string>(
     "RUMPUM LUCKY DRAW 2082",
   );
@@ -581,26 +581,98 @@ const Main: React.FC = () => {
       ) : null}
 
       <div className="app">
-        <div className="top-image-wrap">
-          <img
-            className="top-side-image"
-            src={rumpumChickenSrc}
-            alt="Rumpum Chicken"
-          />
-          <img
-            className="top-image"
-            src={rumpumRamailoSrc}
-            alt="Rumpum Ramailo"
-          />
-          <img className="top-side-image" src={rumpumVegSrc} alt="Rumpum Veg" />
-        </div>
+        <header className="hero">
+          <div className="top-image-wrap">
+            <img
+              className="top-side-image"
+              src={rumpumChickenSrc}
+              alt="Rumpum Chicken"
+            />
+            <img
+              className="top-image"
+              src={rumpumRamailoSrc}
+              alt="Rumpum Ramailo"
+            />
+            <img
+              className="top-side-image"
+              src={rumpumVegSrc}
+              alt="Rumpum Veg"
+            />
+          </div>
 
-        <div className="header">
-          <h1>🎰 {eventTitle}🎰</h1>
-          <p>Official Lucky Number Draw</p>
-        </div>
+          <p className="hero-kicker">Nepal&apos;s Most Loved Instant Noodles</p>
+          <h1>{eventTitle}</h1>
+          <p className="hero-copy">
+            Built for unforgettable campaigns, this premium lucky draw
+            experience brings the same energy, trust, and joy that Rumpum
+            delivers in every pack across Nepal.
+          </p>
+          <div className="hero-actions">
+            <button
+              className="btn btn-spin hero-cta"
+              type="button"
+              onClick={() => {
+                document.getElementById("draw-machine")?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+            >
+              Launch Lucky Draw
+            </button>
+          </div>
+          <div className="hero-stats" aria-label="Rumpum strengths">
+            <div className="hero-stat">
+              <span>Nationwide Trust</span>
+              <strong>Families Across Nepal</strong>
+            </div>
+            <div className="hero-stat">
+              <span>Flavor Leadership</span>
+              <strong>Chicken and Veg Favorites</strong>
+            </div>
+            <div className="hero-stat">
+              <span>Campaign Reliability</span>
+              <strong>Transparent Winner Selection</strong>
+            </div>
+          </div>
+        </header>
 
-        <div className={`machine ${celebrating ? "celebrating" : ""}`}>
+        <section className="pillars" aria-label="Brand highlights">
+          <article className="pillar-card">
+            <h3>Authentic Taste</h3>
+            <p>
+              Crafted for Nepalese taste buds with bold seasoning and satisfying
+              texture in every bite.
+            </p>
+          </article>
+          <article className="pillar-card">
+            <h3>Trusted Quality</h3>
+            <p>
+              Designed with consistent quality standards so every campaign and
+              every product moment feels premium.
+            </p>
+          </article>
+          <article className="pillar-card">
+            <h3>Community First</h3>
+            <p>
+              Promotions that are fair, exciting, and easy to run, helping you
+              engage loyal customers with confidence.
+            </p>
+          </article>
+        </section>
+
+        <section
+          id="draw-machine"
+          className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
+        >
+          <div className="section-heading">
+            <h2>Lucky Draw Control Center</h2>
+            <p>
+              Run transparent, high-energy winner announcements for your brand
+              campaign.
+            </p>
+          </div>
+
           <div className="machine-lights">
             {Array.from({ length: BULB_COUNT }, (_, index) => (
               <div className="bulb" key={`top-${index}`} />
@@ -671,124 +743,124 @@ const Main: React.FC = () => {
           </div>
 
           <div className="status">{status}</div>
-        </div>
+        </section>
 
-        <div className="settings">
-          <h3>⚙ Draw Range Settings</h3>
-          <div className="field-row">
-            <div className="field">
-              <label htmlFor="minVal">Minimum Number</label>
-              <input
-                id="minVal"
-                type="number"
-                value={minVal}
-                min={0}
-                max={MAX_DRAW_NUMBER}
-                disabled={isSpinning}
-                onChange={(event) => setMinVal(event.target.value)}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="maxVal">Maximum Number (up to 10 digits)</label>
-              <input
-                id="maxVal"
-                type="number"
-                value={maxVal}
-                min={0}
-                max={MAX_DRAW_NUMBER}
-                disabled={isSpinning}
-                onChange={(event) => handleMaxValueChange(event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="field-row">
-            <div className="field">
-              <label htmlFor="eventTitle">Event Title</label>
-              <input
-                id="eventTitle"
-                type="text"
-                value={eventTitle}
-                onChange={(event) => setEventTitle(event.target.value)}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="spinSpeed">Spin Speed (ms)</label>
-              <input
-                id="spinSpeed"
-                type="number"
-                value={spinSpeed}
-                min={30}
-                max={300}
-                onChange={(event) => setSpinSpeed(event.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="field-row">
-            <div className="field">
-              <label htmlFor="winnerFloatDurationMs">
-                Winner Float Duration (ms)
-              </label>
-              <input
-                id="winnerFloatDurationMs"
-                type="number"
-                value={winnerFloatDurationMs}
-                min={1000}
-                max={12000}
-                onChange={(event) =>
-                  handleWinnerFloatDurationChange(event.target.value)
-                }
-                onBlur={() => {
-                  if (winnerFloatDurationMs === "") {
-                    setWinnerFloatDurationMs("3200");
-                  }
-                }}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="winnerFloatDurationPreview">Preview</label>
-              <input
-                id="winnerFloatDurationPreview"
-                type="text"
-                value={`${(winnerFloatDuration / 1000).toFixed(1)} seconds`}
-                readOnly
-              />
-            </div>
-          </div>
-
-          <div className="remaining">{remainingText}</div>
-        </div>
-
-        <div className="history-wrap">
-          <h3>📋 Draw History</h3>
-          <div className="history-list">
-            {history.length === 0 ? (
-              <div
-                style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.9rem" }}
-              >
-                No draws yet. Press SPIN DRAW to begin.
+        <div className="panel-grid">
+          <section className="settings">
+            <h3>Draw Settings</h3>
+            <div className="field-row">
+              <div className="field">
+                <label htmlFor="minVal">Minimum Number</label>
+                <input
+                  id="minVal"
+                  type="number"
+                  value={minVal}
+                  min={0}
+                  max={MAX_DRAW_NUMBER}
+                  disabled={isSpinning}
+                  onChange={(event) => setMinVal(event.target.value)}
+                />
               </div>
-            ) : (
-              history.map((item, index) => (
-                <div
-                  className="h-item"
-                  key={`${item.code}-${item.time}-${index}`}
-                >
-                  <span>
-                    {index + 1}. <span className="h-code">{item.code}</span>{" "}
-                    <span className="h-title">{item.title}</span>
-                  </span>
-                  <span className="h-time">{item.time}</span>
+              <div className="field">
+                <label htmlFor="maxVal">Maximum Number (up to 10 digits)</label>
+                <input
+                  id="maxVal"
+                  type="number"
+                  value={maxVal}
+                  min={0}
+                  max={MAX_DRAW_NUMBER}
+                  disabled={isSpinning}
+                  onChange={(event) => handleMaxValueChange(event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="field-row">
+              <div className="field">
+                <label htmlFor="eventTitle">Event Title</label>
+                <input
+                  id="eventTitle"
+                  type="text"
+                  value={eventTitle}
+                  onChange={(event) => setEventTitle(event.target.value)}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="spinSpeed">Spin Speed (ms)</label>
+                <input
+                  id="spinSpeed"
+                  type="number"
+                  value={spinSpeed}
+                  min={30}
+                  max={300}
+                  onChange={(event) => setSpinSpeed(event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="field-row">
+              <div className="field">
+                <label htmlFor="winnerFloatDurationMs">
+                  Winner Float Duration (ms)
+                </label>
+                <input
+                  id="winnerFloatDurationMs"
+                  type="number"
+                  value={winnerFloatDurationMs}
+                  min={1000}
+                  max={12000}
+                  onChange={(event) =>
+                    handleWinnerFloatDurationChange(event.target.value)
+                  }
+                  onBlur={() => {
+                    if (winnerFloatDurationMs === "") {
+                      setWinnerFloatDurationMs("3200");
+                    }
+                  }}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="winnerFloatDurationPreview">Preview</label>
+                <input
+                  id="winnerFloatDurationPreview"
+                  type="text"
+                  value={`${(winnerFloatDuration / 1000).toFixed(1)} seconds`}
+                  readOnly
+                />
+              </div>
+            </div>
+
+            <div className="remaining">{remainingText}</div>
+          </section>
+
+          <section className="history-wrap">
+            <h3>Recent Winners</h3>
+            <div className="history-list">
+              {history.length === 0 ? (
+                <div className="history-empty">
+                  No draws yet. Press SPIN DRAW to start the first winner.
                 </div>
-              ))
-            )}
-          </div>
+              ) : (
+                history.map((item, index) => (
+                  <div
+                    className="h-item"
+                    key={`${item.code}-${item.time}-${index}`}
+                  >
+                    <span>
+                      {index + 1}. <span className="h-code">{item.code}</span>{" "}
+                      <span className="h-title">{item.title}</span>
+                    </span>
+                    <span className="h-time">{item.time}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
         </div>
 
-        <footer>
-          RUMPUM LUCKY DRAW {new Date().getFullYear()} | Each winner is removed
-          from future draws
+        <footer className="site-footer">
+          RUMPUM LUCKY DRAW {new Date().getFullYear()} | Winners are
+          automatically removed from future draws for complete fairness.
         </footer>
       </div>
 
