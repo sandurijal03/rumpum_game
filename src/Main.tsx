@@ -6,6 +6,7 @@ import rumpumChickenSrc from "./Rumpum Chicken.png";
 import rumpumRamailoSrc from "./rumpum_ramailo.png";
 import rumpumVegSrc from "./rumpum veg.png";
 import winningAudioSrc from "./winning_audio.mpeg";
+import af from "./af_logo.png";
 
 type DrawHistoryItem = {
   code: string;
@@ -1002,21 +1003,32 @@ const Main: React.FC = () => {
             id="draw-machine"
             className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
           >
-            {/* <img
-              className="section-brand-image section-brand-image-right"
-              src={rumpumRamailoSrc}
-              alt="Rumpum Ramailo"
-              width={1000}
-            /> */}
             <div className="section-heading">
+              {/* <img
+                className="section-brand-image ramailo-header"
+                src={rumpumRamailoSrc}
+                alt="Rumpum Ramailo"
+              /> */}
               <div className="section-heading-main">
                 <img
+                  className="section-brand-image ramailo"
+                  src={af}
+                  alt="Rumpum Ramailo"
+                />
+                <img
+                  className="section-brand-image ramailo"
+                  src={rumpumRamailoSrc}
+                  alt="Rumpum Ramailo"
+                />
+                <h2>{eventTitle}</h2>
+                <img
+                  className="section-brand-image"
                   src={rumpumChickenSrc}
                   alt="Rumpum Chicken Noodle"
                   width={"100px"}
                 />
-                <h2>{eventTitle}</h2>
                 <img
+                  className="section-brand-image "
                   src={rumpumVegSrc}
                   alt="Rumpum Veg Noodle"
                   width={"100px"}

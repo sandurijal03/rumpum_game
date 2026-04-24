@@ -280,12 +280,13 @@ body::before {
 }
 
 .section-heading-main {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: clamp(6px, 1.2vw, 12px);
   width: 100%;
-  max-width: 760px;
+  max-width: 980px;
   margin: 0 auto;
 }
 
@@ -293,14 +294,27 @@ body::before {
   margin: 0;
   text-align: center;
   min-width: 0;
+  white-space: nowrap;
 }
 
 .section-brand-image {
-  width: min(10vw, 84px);
+  width: min(12vw, 100px);
   min-width: 46px;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 6px 12px rgba(52, 24, 8, 0.3));
+}
+
+.ramailo-header {
+  position: absolute;
+  top: -5px;
+  /* width: min(15vw, 400px); */
+  min-width: 38px;
+}
+
+.section-brand-image.ramailo {
+  width: min(14vw, 120px);
+  min-width: 58px;
 }
 
 .section-brand-image-left {
@@ -965,12 +979,17 @@ body::before {
   }
 
   .section-heading-main {
-    gap: 8px;
+    gap: 6px;
   }
 
   .section-brand-image {
-    width: 56px;
-    min-width: 56px;
+    width: 64px;
+    min-width: 64px;
+  }
+
+  .section-brand-image.ramailo {
+    width: 76px;
+    min-width: 76px;
   }
 
   .reel {
