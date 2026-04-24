@@ -1,6 +1,9 @@
 import * as React from "react";
 
 import "./Main.css";
+import rumpumChickenSrc from "./Rumpum Chicken.png";
+import rumpumRamailoSrc from "./rumpum_ramailo.png";
+import rumpumVegSrc from "./rumpum veg.png";
 import winMusicSrc from "./win-music.mp4";
 
 type DrawHistoryItem = {
@@ -578,6 +581,20 @@ const Main: React.FC = () => {
       ) : null}
 
       <div className="app">
+        <div className="top-image-wrap">
+          <img
+            className="top-side-image"
+            src={rumpumChickenSrc}
+            alt="Rumpum Chicken"
+          />
+          <img
+            className="top-image"
+            src={rumpumRamailoSrc}
+            alt="Rumpum Ramailo"
+          />
+          <img className="top-side-image" src={rumpumVegSrc} alt="Rumpum Veg" />
+        </div>
+
         <div className="header">
           <h1>🎰 {eventTitle}🎰</h1>
           <p>Official Lucky Number Draw</p>

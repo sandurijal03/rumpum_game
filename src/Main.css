@@ -117,6 +117,27 @@ body {
 }
 
 .app { max-width: 900px; margin: 0 auto; padding: 20px; }
+.top-image-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+.top-image {
+  width: min(100%, 320px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.35));
+}
+.top-side-image {
+  width: min(28vw, 140px);
+  max-width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.28));
+}
 .header { text-align: center; padding: 30px 0 10px; }
 .header h1 {
   font-size: clamp(1.8rem, 5vw, 3.2rem);
@@ -341,6 +362,15 @@ body {
 footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.45); font-size: 0.75rem; }
 
 @media (max-width: 600px) {
+  .top-image-wrap {
+    gap: 8px;
+  }
+  .top-image {
+    width: min(54vw, 220px);
+  }
+  .top-side-image {
+    width: min(22vw, 90px);
+  }
   .reels { gap: 5px; }
   .reel { height: 110px; }
   .d.mid { font-size: 2rem; }
