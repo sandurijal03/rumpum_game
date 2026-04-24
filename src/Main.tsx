@@ -1,10 +1,11 @@
 import * as React from "react";
+import { CSVLink } from "react-csv";
 
 import "./Main.css";
-import heroImageSrc from "./hero.jpeg";
 import rumpumChickenSrc from "./Rumpum Chicken.png";
 import rumpumRamailoSrc from "./rumpum_ramailo.png";
 import rumpumVegSrc from "./rumpum veg.png";
+import winningAudioSrc from "./winning_audio.mpeg";
 
 type DrawHistoryItem = {
   code: string;
@@ -54,6 +55,7 @@ const Main: React.FC = () => {
     React.useState<string>("3200");
 
   const audioContextRef = React.useRef<AudioContext | null>(null);
+  const winningAudioRef = React.useRef<HTMLAudioElement | null>(null);
   const celebrationSourcesRef = React.useRef<AudioScheduledSourceNode[]>([]);
   const celebrationNodesRef = React.useRef<AudioNode[]>([]);
   const celebrationHideStopTimeoutRef = React.useRef<number | null>(null);
@@ -113,6 +115,11 @@ const Main: React.FC = () => {
         node.disconnect();
       });
       celebrationNodesRef.current = [];
+
+      if (winningAudioRef.current) {
+        winningAudioRef.current.pause();
+        winningAudioRef.current.currentTime = 0;
+      }
 
       if (audioContextRef.current) {
         audioContextRef.current.close().catch(() => {
@@ -324,6 +331,11 @@ const Main: React.FC = () => {
     });
     celebrationNodesRef.current = [];
 
+    if (winningAudioRef.current) {
+      winningAudioRef.current.pause();
+      winningAudioRef.current.currentTime = 0;
+    }
+
     setShowStopMusic(false);
   }, []);
 
@@ -335,6 +347,15 @@ const Main: React.FC = () => {
 
     stopWinMusic();
 
+    const winningAudio = winningAudioRef.current;
+    if (winningAudio) {
+      winningAudio.currentTime = 0;
+      winningAudio.volume = 1;
+      winningAudio.play().catch(() => {
+        return;
+      });
+    }
+
     const baseTime = audioContext.currentTime + 0.03;
     const masterGain = audioContext.createGain();
     masterGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
@@ -342,7 +363,7 @@ const Main: React.FC = () => {
       0.74,
       audioContext.currentTime + 0.06,
     );
-    masterGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + 3.2);
+    masterGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + 2.9);
     masterGain.connect(audioContext.destination);
 
     const shimmerDelay = audioContext.createDelay();
@@ -370,64 +391,57 @@ const Main: React.FC = () => {
       {
         frequency: 659.25,
         offset: 0.0,
-        duration: 0.2,
+        duration: 0.16,
         gain: 0.22,
         type: "triangle" as OscillatorType,
       },
       {
         frequency: 783.99,
-        offset: 0.14,
-        duration: 0.2,
+        offset: 0.11,
+        duration: 0.16,
         gain: 0.22,
         type: "triangle" as OscillatorType,
       },
       {
         frequency: 987.77,
-        offset: 0.28,
-        duration: 0.22,
+        offset: 0.24,
+        duration: 0.18,
         gain: 0.24,
         type: "triangle" as OscillatorType,
       },
       {
         frequency: 1174.66,
-        offset: 0.45,
-        duration: 0.24,
+        offset: 0.39,
+        duration: 0.2,
         gain: 0.25,
         type: "sawtooth" as OscillatorType,
       },
       {
         frequency: 1318.51,
-        offset: 0.68,
-        duration: 0.3,
+        offset: 0.58,
+        duration: 0.23,
         gain: 0.24,
         type: "sine" as OscillatorType,
       },
       {
         frequency: 1567.98,
-        offset: 0.93,
-        duration: 0.34,
+        offset: 0.8,
+        duration: 0.24,
         gain: 0.23,
         type: "sine" as OscillatorType,
       },
       {
         frequency: 1318.51,
-        offset: 1.35,
-        duration: 0.24,
+        offset: 1.05,
+        duration: 0.18,
         gain: 0.2,
         type: "triangle" as OscillatorType,
       },
       {
         frequency: 1760.0,
-        offset: 1.56,
-        duration: 0.36,
+        offset: 1.22,
+        duration: 0.26,
         gain: 0.22,
-        type: "sine" as OscillatorType,
-      },
-      {
-        frequency: 1975.53,
-        offset: 1.95,
-        duration: 0.42,
-        gain: 0.24,
         type: "sine" as OscillatorType,
       },
     ];
@@ -492,7 +506,7 @@ const Main: React.FC = () => {
       harmonyOsc.stop(baseTime + tone.offset + tone.duration);
     });
 
-    const bellNotes = [1567.98, 1760.0, 2093.0, 2349.32];
+    const bellNotes = [1567.98, 1975.53, 2349.32];
     bellNotes.forEach((frequency, index) => {
       const bellOffset = 0.5 + index * 0.36;
       const bell = audioContext.createOscillator();
@@ -523,7 +537,7 @@ const Main: React.FC = () => {
       bell.stop(baseTime + bellOffset + 0.5);
     });
 
-    const fireworkBurstOffsets = [0.62, 1.18, 1.74, 2.28];
+    const fireworkBurstOffsets = [0.52, 0.96, 1.38, 1.8, 2.2];
     fireworkBurstOffsets.forEach((offset, index) => {
       const whistle = audioContext.createOscillator();
       const whistleGain = audioContext.createGain();
@@ -538,7 +552,7 @@ const Main: React.FC = () => {
       );
       whistleGain.gain.setValueAtTime(0.0001, baseTime + offset - 0.09);
       whistleGain.gain.exponentialRampToValueAtTime(
-        0.06,
+        0.085,
         baseTime + offset - 0.03,
       );
       whistleGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + offset);
@@ -554,7 +568,7 @@ const Main: React.FC = () => {
 
       const buffer = audioContext.createBuffer(
         1,
-        Math.floor(audioContext.sampleRate * 0.24),
+        Math.floor(audioContext.sampleRate * 0.3),
         audioContext.sampleRate,
       );
       const channelData = buffer.getChannelData(0);
@@ -577,8 +591,8 @@ const Main: React.FC = () => {
 
       const gain = audioContext.createGain();
       gain.gain.setValueAtTime(0.0001, baseTime + offset);
-      gain.gain.exponentialRampToValueAtTime(0.13, baseTime + offset + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, baseTime + offset + 0.24);
+      gain.gain.exponentialRampToValueAtTime(0.19, baseTime + offset + 0.016);
+      gain.gain.exponentialRampToValueAtTime(0.0001, baseTime + offset + 0.3);
 
       noise.connect(highPass);
       highPass.connect(bandPass);
@@ -589,7 +603,7 @@ const Main: React.FC = () => {
       celebrationSourcesRef.current.push(noise);
 
       noise.start(baseTime + offset);
-      noise.stop(baseTime + offset + 0.24);
+      noise.stop(baseTime + offset + 0.3);
     });
 
     setShowStopMusic(true);
@@ -598,7 +612,7 @@ const Main: React.FC = () => {
       setShowStopMusic(false);
       celebrationHideStopTimeoutRef.current = null;
       clearTrackedTimeout(hideStopMusicId);
-    }, 3600);
+    }, 3200);
     celebrationHideStopTimeoutRef.current = hideStopMusicId;
     addTimeout(hideStopMusicId);
   }, [getAudioContext, stopWinMusic]);
@@ -877,6 +891,47 @@ const Main: React.FC = () => {
       });
   }, [winNumber]);
 
+  const csvHeaders = React.useMemo(
+    () => [
+      { label: "Rank", key: "rank" },
+      { label: "Winner Code", key: "winnerCode" },
+      { label: "Draw Title", key: "drawTitle" },
+      { label: "Draw Time", key: "drawTime" },
+    ],
+    [],
+  );
+
+  const csvData = React.useMemo(
+    () =>
+      history.map((item, index) => ({
+        rank: index + 1,
+        winnerCode: item.code,
+        drawTitle: item.title,
+        drawTime: item.time,
+      })),
+    [history],
+  );
+
+  const csvFileName = React.useMemo(() => {
+    const safeTitle =
+      (eventTitle.trim() || "rumpum-lucky-draw")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "rumpum-lucky-draw";
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    return `${safeTitle}-winners-${dateStamp}.csv`;
+  }, [eventTitle]);
+
+  const handleExportCsvClick = React.useCallback(() => {
+    if (history.length === 0) {
+      setStatus("⚠ No winners to export yet.");
+      return false;
+    }
+
+    setStatus(`✅ Exported ${history.length} winner(s) to ${csvFileName}`);
+    return true;
+  }, [csvFileName, history.length]);
+
   const resetExclusions = React.useCallback(() => {
     excludedRef.current.clear();
     setExcludedCount(0);
@@ -886,6 +941,8 @@ const Main: React.FC = () => {
   const displayWinNumber = isSpinning
     ? normalizeToDigits(midDigits.join(""))
     : normalizeToDigits(winNumber);
+
+  const visibleHistory = React.useMemo(() => history.slice(0, 6), [history]);
 
   const celebrationBursts = React.useMemo(
     () =>
@@ -940,7 +997,7 @@ const Main: React.FC = () => {
       ) : null}
 
       <div className="app">
-        <header className="hero">
+        {/* <header className="hero">
           <img
             className="hero-side-image hero-side-image-left"
             src={rumpumChickenSrc}
@@ -952,10 +1009,6 @@ const Main: React.FC = () => {
             alt="Rumpum Veg"
           />
 
-          <div className="top-image-wrap">
-            <img className="top-image" src={heroImageSrc} alt="Rumpum Hero" />
-          </div>
-
           <div className="hero-sub-image-wrap">
             <img
               className="hero-sub-image"
@@ -966,258 +1019,243 @@ const Main: React.FC = () => {
 
           <p className="hero-kicker">Nepal&apos;s Most Loved Instant Noodles</p>
           <h1>{eventTitle}</h1>
-          <p className="hero-copy">
-            Built for unforgettable campaigns, this premium lucky draw
-            experience brings the same energy, trust, and joy that Rumpum
-            delivers in every pack across Nepal.
-          </p>
-          <div className="hero-actions">
-            <button
-              className="btn btn-spin hero-cta"
-              type="button"
-              onClick={() => {
-                document.getElementById("draw-machine")?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              }}
-            >
-              Launch Lucky Draw
-            </button>
-          </div>
-          <div className="hero-stats" aria-label="Rumpum strengths">
-            <div className="hero-stat">
-              <span>Nationwide Trust</span>
-              <strong>Families Across Nepal</strong>
-            </div>
-            <div className="hero-stat">
-              <span>Flavor Leadership</span>
-              <strong>Chicken and Veg Favorites</strong>
-            </div>
-            <div className="hero-stat">
-              <span>Campaign Reliability</span>
-              <strong>Transparent Winner Selection</strong>
-            </div>
-          </div>
-        </header>
+        </header> */}
 
-        <section className="pillars" aria-label="Brand highlights">
-          <article className="pillar-card">
-            <h3>Authentic Taste</h3>
-            <p>
-              Crafted for Nepalese taste buds with bold seasoning and satisfying
-              texture in every bite.
-            </p>
-          </article>
-          <article className="pillar-card">
-            <h3>Trusted Quality</h3>
-            <p>
-              Designed with consistent quality standards so every campaign and
-              every product moment feels premium.
-            </p>
-          </article>
-          <article className="pillar-card">
-            <h3>Community First</h3>
-            <p>
-              Promotions that are fair, exciting, and easy to run, helping you
-              engage loyal customers with confidence.
-            </p>
-          </article>
-        </section>
-
-        <section
-          id="draw-machine"
-          className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
-        >
-          <div className="section-heading">
-            <h2>Lucky Draw Control Center</h2>
-            <p>
-              Run transparent, high-energy winner announcements for your brand
-              campaign.
-            </p>
-          </div>
-
-          <div className="machine-lights">
-            {Array.from({ length: BULB_COUNT }, (_, index) => (
-              <div className="bulb" key={`top-${index}`} />
-            ))}
-          </div>
-
-          <div
-            className="reels"
-            style={{
-              gridTemplateColumns: `repeat(${reelCount}, minmax(0, 1fr))`,
-            }}
+        <div className="single-screen-main">
+          <section
+            id="draw-machine"
+            className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
           >
-            {displayWinNumber.split("").map((digit, index) => {
-              const value = Number(digit);
-              return (
-                <div className="reel" key={index}>
-                  <div className="d side">{(value + 9) % 10}</div>
-                  <div className="d mid">{value}</div>
-                  <div className="d side">{(value + 1) % 10}</div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="machine-lights">
-            {Array.from({ length: BULB_COUNT }, (_, index) => (
-              <div className="bulb" key={`bottom-${index}`} />
-            ))}
-          </div>
-
-          <div className="win-banner">
-            <div className="win-label">Winning Number</div>
-            <div
-              className={`win-number ${celebrating ? "is-celebrating" : ""}`}
-              style={{ color: winColor }}
-            >
-              {displayWinNumber}
-            </div>
-            <div className="win-meta">{winMeta}</div>
-          </div>
-
-          <div className="controls">
-            <button
-              className="btn btn-spin"
-              type="button"
-              onClick={() => void spin()}
-              disabled={isSpinning}
-            >
-              🎲 SPIN DRAW
-            </button>
-            <button
-              className={`btn btn-stop ${showStopMusic ? "show" : ""}`}
-              type="button"
-              onClick={stopWinMusic}
-            >
-              ⏹ Stop Music
-            </button>
-            <button className="btn btn-copy" type="button" onClick={copyResult}>
-              📋 Copy
-            </button>
-            <button
-              className="btn btn-reset"
-              type="button"
-              onClick={resetExclusions}
-            >
-              🔄 Reset Winners
-            </button>
-          </div>
-
-          <div className="status">{status}</div>
-        </section>
-
-        <div className="panel-grid">
-          <section className="settings">
-            <h3>Draw Settings</h3>
-            <div className="field-row">
-              <div className="field">
-                <label htmlFor="minVal">Minimum Number</label>
-                <input
-                  id="minVal"
-                  type="number"
-                  value={minVal}
-                  min={0}
-                  max={MAX_DRAW_NUMBER}
-                  disabled={isSpinning}
-                  onChange={(event) => setMinVal(event.target.value)}
-                />
-              </div>
-              <div className="field">
-                <label htmlFor="maxVal">Maximum Number (up to 10 digits)</label>
-                <input
-                  id="maxVal"
-                  type="number"
-                  value={maxVal}
-                  min={0}
-                  max={MAX_DRAW_NUMBER}
-                  disabled={isSpinning}
-                  onChange={(event) => handleMaxValueChange(event.target.value)}
-                />
-              </div>
+            {/* <div className="hero-sub-image-wrap">
+              <img
+                className="hero-sub-image"
+                src={rumpumRamailoSrc}
+                alt="Rumpum Ramailo"
+              />
+            </div> */}
+            <div className="section-heading">
+              <h2>{eventTitle}</h2>
+              <p>
+                Run transparent, high-energy winner announcements for your brand
+                campaign.
+              </p>
             </div>
 
-            <div className="field-row">
-              <div className="field">
-                <label htmlFor="eventTitle">Event Title</label>
-                <input
-                  id="eventTitle"
-                  type="text"
-                  value={eventTitle}
-                  onChange={(event) => setEventTitle(event.target.value)}
-                />
-              </div>
-              <div className="field">
-                <label htmlFor="spinSpeed">Spin Speed (ms)</label>
-                <input
-                  id="spinSpeed"
-                  type="number"
-                  value={spinSpeed}
-                  min={30}
-                  max={300}
-                  onChange={(event) => setSpinSpeed(event.target.value)}
-                />
-              </div>
+            <div className="machine-lights">
+              {Array.from({ length: BULB_COUNT }, (_, index) => (
+                <div className="bulb" key={`top-${index}`} />
+              ))}
             </div>
 
-            <div className="field-row">
-              <div className="field">
-                <label htmlFor="winnerFloatDurationMs">
-                  Winner Float Duration (ms)
-                </label>
-                <input
-                  id="winnerFloatDurationMs"
-                  type="number"
-                  value={winnerFloatDurationMs}
-                  min={1000}
-                  max={12000}
-                  onChange={(event) =>
-                    handleWinnerFloatDurationChange(event.target.value)
-                  }
-                  onBlur={() => {
-                    if (winnerFloatDurationMs === "") {
-                      setWinnerFloatDurationMs("3200");
-                    }
-                  }}
-                />
+            <div className="reels-stage">
+              <img
+                className="reel-noodle reel-noodle-left"
+                src={rumpumChickenSrc}
+                alt="Rumpum Chicken Noodle"
+              />
+
+              <div
+                className="reels"
+                style={{
+                  gridTemplateColumns: `repeat(${reelCount}, minmax(0, 1fr))`,
+                }}
+              >
+                {displayWinNumber.split("").map((digit, index) => {
+                  const value = Number(digit);
+                  return (
+                    <div className="reel" key={index}>
+                      <div className="d side">{(value + 9) % 10}</div>
+                      <div className="d mid">{value}</div>
+                      <div className="d side">{(value + 1) % 10}</div>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="field">
-                <label htmlFor="winnerFloatDurationPreview">Preview</label>
-                <input
-                  id="winnerFloatDurationPreview"
-                  type="text"
-                  value={`${(winnerFloatDuration / 1000).toFixed(1)} seconds`}
-                  readOnly
-                />
-              </div>
+
+              <img
+                className="reel-noodle reel-noodle-right"
+                src={rumpumVegSrc}
+                alt="Rumpum Veg Noodle"
+              />
             </div>
 
-            <div className="remaining">{remainingText}</div>
-          </section>
+            <div className="machine-lights">
+              {Array.from({ length: BULB_COUNT }, (_, index) => (
+                <div className="bulb" key={`bottom-${index}`} />
+              ))}
+            </div>
 
-          <section className="history-wrap">
-            <h3>Recent Winners</h3>
-            <div className="history-list">
-              {history.length === 0 ? (
-                <div className="history-empty">
-                  No draws yet. Press SPIN DRAW to start the first winner.
-                </div>
-              ) : (
-                history.map((item, index) => (
-                  <div
-                    className="h-item"
-                    key={`${item.code}-${item.time}-${index}`}
-                  >
-                    <span>
-                      {index + 1}. <span className="h-code">{item.code}</span>{" "}
-                      <span className="h-title">{item.title}</span>
-                    </span>
-                    <span className="h-time">{item.time}</span>
+            <div className="win-banner">
+              <div className="win-label">Winning Number</div>
+              <div
+                className={`win-number ${celebrating ? "is-celebrating" : ""}`}
+                style={{ color: winColor }}
+              >
+                {displayWinNumber}
+              </div>
+              <div className="win-meta">{winMeta}</div>
+            </div>
+
+            <div className="controls">
+              <button
+                className="btn btn-spin"
+                type="button"
+                onClick={() => void spin()}
+                disabled={isSpinning}
+              >
+                🎲 SPIN DRAW
+              </button>
+              <button
+                className={`btn btn-stop ${showStopMusic ? "show" : ""}`}
+                type="button"
+                onClick={stopWinMusic}
+              >
+                ⏹ Stop Music
+              </button>
+              <button
+                className="btn btn-copy"
+                type="button"
+                onClick={copyResult}
+              >
+                📋 Copy
+              </button>
+              <CSVLink
+                className="btn btn-copy"
+                data={csvData}
+                headers={csvHeaders}
+                filename={csvFileName}
+                onClick={handleExportCsvClick}
+                style={{ textDecoration: "none" }}
+              >
+                ⬇ Export CSV
+              </CSVLink>
+              <button
+                className="btn btn-reset"
+                type="button"
+                onClick={resetExclusions}
+              >
+                🔄 Reset Winners
+              </button>
+            </div>
+
+            <div className="status">{status}</div>
+
+            <div className="panel-grid">
+              <section className="settings">
+                <h3>Draw Settings</h3>
+                <div className="field-row">
+                  <div className="field">
+                    <label htmlFor="minVal">Minimum Number</label>
+                    <input
+                      id="minVal"
+                      type="number"
+                      value={minVal}
+                      min={0}
+                      max={MAX_DRAW_NUMBER}
+                      disabled={isSpinning}
+                      onChange={(event) => setMinVal(event.target.value)}
+                    />
                   </div>
-                ))
-              )}
+                  <div className="field">
+                    <label htmlFor="maxVal">
+                      Maximum Number (up to 10 digits)
+                    </label>
+                    <input
+                      id="maxVal"
+                      type="number"
+                      value={maxVal}
+                      min={0}
+                      max={MAX_DRAW_NUMBER}
+                      disabled={isSpinning}
+                      onChange={(event) =>
+                        handleMaxValueChange(event.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label htmlFor="eventTitle">Event Title</label>
+                    <input
+                      id="eventTitle"
+                      type="text"
+                      value={eventTitle}
+                      onChange={(event) => setEventTitle(event.target.value)}
+                    />
+                  </div>
+                  <div className="field">
+                    <label htmlFor="spinSpeed">Spin Speed (ms)</label>
+                    <input
+                      id="spinSpeed"
+                      type="number"
+                      value={spinSpeed}
+                      min={30}
+                      max={300}
+                      onChange={(event) => setSpinSpeed(event.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="field-row">
+                  <div className="field">
+                    <label htmlFor="winnerFloatDurationMs">
+                      Winner Float Duration (ms)
+                    </label>
+                    <input
+                      id="winnerFloatDurationMs"
+                      type="number"
+                      value={winnerFloatDurationMs}
+                      min={1000}
+                      max={12000}
+                      onChange={(event) =>
+                        handleWinnerFloatDurationChange(event.target.value)
+                      }
+                      onBlur={() => {
+                        if (winnerFloatDurationMs === "") {
+                          setWinnerFloatDurationMs("3200");
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="field">
+                    <label htmlFor="winnerFloatDurationPreview">Preview</label>
+                    <input
+                      id="winnerFloatDurationPreview"
+                      type="text"
+                      value={`${(winnerFloatDuration / 1000).toFixed(1)} seconds`}
+                      readOnly
+                    />
+                  </div>
+                </div>
+
+                <div className="remaining">{remainingText}</div>
+              </section>
+
+              <section className="history-wrap">
+                <h3>Recent Winners</h3>
+                <div className="history-list">
+                  {history.length === 0 ? (
+                    <div className="history-empty">
+                      No draws yet. Press SPIN DRAW to start the first winner.
+                    </div>
+                  ) : (
+                    visibleHistory.map((item, index) => (
+                      <div
+                        className="h-item"
+                        key={`${item.code}-${item.time}-${index}`}
+                      >
+                        <span>
+                          {index + 1}.{" "}
+                          <span className="h-code">{item.code}</span>{" "}
+                          <span className="h-title">{item.title}</span>
+                        </span>
+                        <span className="h-time">{item.time}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
             </div>
           </section>
         </div>
@@ -1227,6 +1265,10 @@ const Main: React.FC = () => {
           automatically removed from future draws for complete fairness.
         </footer>
       </div>
+
+      <audio ref={winningAudioRef} preload="auto">
+        <source src={winningAudioSrc} type="audio/mpeg" />
+      </audio>
     </>
   );
 };
