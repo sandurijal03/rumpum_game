@@ -193,49 +193,73 @@ const Main: React.FC = () => {
     }
 
     const now = audioContext.currentTime;
+    const pitchJitter = 1 + (Math.random() - 0.5) * 0.05;
 
-    const oscillator = audioContext.createOscillator();
-    const toneGain = audioContext.createGain();
-    oscillator.type = "triangle";
-    oscillator.frequency.setValueAtTime(1450, now);
-    oscillator.frequency.exponentialRampToValueAtTime(760, now + 0.03);
-    toneGain.gain.setValueAtTime(0.0001, now);
-    toneGain.gain.exponentialRampToValueAtTime(0.1, now + 0.005);
-    toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
-    oscillator.connect(toneGain);
-    toneGain.connect(audioContext.destination);
-    oscillator.start(now);
-    oscillator.stop(now + 0.04);
+    const attackOsc = audioContext.createOscillator();
+    const attackGain = audioContext.createGain();
+    attackOsc.type = "square";
+    attackOsc.frequency.setValueAtTime(1880 * pitchJitter, now);
+    attackOsc.frequency.exponentialRampToValueAtTime(
+      980 * pitchJitter,
+      now + 0.02,
+    );
+    attackGain.gain.setValueAtTime(0.0001, now);
+    attackGain.gain.exponentialRampToValueAtTime(0.085, now + 0.003);
+    attackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.024);
+    attackOsc.connect(attackGain);
+    attackGain.connect(audioContext.destination);
+    attackOsc.start(now);
+    attackOsc.stop(now + 0.026);
+
+    const bodyOsc = audioContext.createOscillator();
+    const bodyGain = audioContext.createGain();
+    bodyOsc.type = "triangle";
+    bodyOsc.frequency.setValueAtTime(980 * pitchJitter, now);
+    bodyOsc.frequency.exponentialRampToValueAtTime(
+      640 * pitchJitter,
+      now + 0.035,
+    );
+    bodyGain.gain.setValueAtTime(0.0001, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.06, now + 0.005);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+    bodyOsc.connect(bodyGain);
+    bodyGain.connect(audioContext.destination);
+    bodyOsc.start(now);
+    bodyOsc.stop(now + 0.045);
 
     const noiseBuffer = audioContext.createBuffer(
       1,
-      Math.floor(audioContext.sampleRate * 0.022),
+      Math.floor(audioContext.sampleRate * 0.018),
       audioContext.sampleRate,
     );
     const channelData = noiseBuffer.getChannelData(0);
     for (let i = 0; i < channelData.length; i += 1) {
       channelData[i] =
-        (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.2);
+        (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.8);
     }
 
     const noise = audioContext.createBufferSource();
+    const highPass = audioContext.createBiquadFilter();
     const bandPass = audioContext.createBiquadFilter();
     const noiseGain = audioContext.createGain();
 
     noise.buffer = noiseBuffer;
+    highPass.type = "highpass";
+    highPass.frequency.setValueAtTime(980, now);
     bandPass.type = "bandpass";
-    bandPass.frequency.setValueAtTime(1650, now);
-    bandPass.Q.value = 0.95;
+    bandPass.frequency.setValueAtTime(2100, now);
+    bandPass.Q.value = 1.2;
 
     noiseGain.gain.setValueAtTime(0.0001, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.07, now + 0.004);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
+    noiseGain.gain.exponentialRampToValueAtTime(0.05, now + 0.003);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.016);
 
-    noise.connect(bandPass);
+    noise.connect(highPass);
+    highPass.connect(bandPass);
     bandPass.connect(noiseGain);
     noiseGain.connect(audioContext.destination);
     noise.start(now);
-    noise.stop(now + 0.024);
+    noise.stop(now + 0.018);
   }, [getAudioContext]);
 
   const playReelStop = React.useCallback(() => {
