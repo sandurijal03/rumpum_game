@@ -3,6 +3,7 @@ import * as React from "react";
 import "./Main.css";
 import heroImageSrc from "./hero.jpeg";
 import rumpumChickenSrc from "./Rumpum Chicken.png";
+import rumpumRamailoSrc from "./rumpum_ramailo.png";
 import rumpumVegSrc from "./rumpum veg.png";
 import winMusicSrc from "./win-music.mp4";
 
@@ -593,6 +594,14 @@ const Main: React.FC = () => {
               className="top-side-image"
               src={rumpumVegSrc}
               alt="Rumpum Veg"
+            />
+          </div>
+
+          <div className="hero-sub-image-wrap">
+            <img
+              className="hero-sub-image"
+              src={rumpumRamailoSrc}
+              alt="Rumpum Ramailo"
             />
           </div>
 
