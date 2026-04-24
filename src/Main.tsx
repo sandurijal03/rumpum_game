@@ -5,7 +5,6 @@ import heroImageSrc from "./hero.jpeg";
 import rumpumChickenSrc from "./Rumpum Chicken.png";
 import rumpumRamailoSrc from "./rumpum_ramailo.png";
 import rumpumVegSrc from "./rumpum veg.png";
-import winMusicSrc from "./win-music.mp4";
 
 type DrawHistoryItem = {
   code: string;
@@ -55,7 +54,9 @@ const Main: React.FC = () => {
     React.useState<string>("3200");
 
   const audioContextRef = React.useRef<AudioContext | null>(null);
-  const winMusicRef = React.useRef<HTMLAudioElement | null>(null);
+  const celebrationSourcesRef = React.useRef<AudioScheduledSourceNode[]>([]);
+  const celebrationNodesRef = React.useRef<AudioNode[]>([]);
+  const celebrationHideStopTimeoutRef = React.useRef<number | null>(null);
   const excludedRef = React.useRef<Set<number>>(new Set());
   const drawCountRef = React.useRef<number>(0);
   const intervalIdsRef = React.useRef<Set<number>>(new Set());
@@ -94,9 +95,25 @@ const Main: React.FC = () => {
       intervalIdsRef.current.clear();
       timeoutIdsRef.current.clear();
 
-      if (winMusicRef.current) {
-        winMusicRef.current.pause();
+      if (celebrationHideStopTimeoutRef.current !== null) {
+        window.clearTimeout(celebrationHideStopTimeoutRef.current);
+        celebrationHideStopTimeoutRef.current = null;
       }
+      celebrationSourcesRef.current.forEach((source) => {
+        try {
+          source.stop();
+        } catch {
+          return;
+        } finally {
+          source.disconnect();
+        }
+      });
+      celebrationSourcesRef.current = [];
+      celebrationNodesRef.current.forEach((node) => {
+        node.disconnect();
+      });
+      celebrationNodesRef.current = [];
+
       if (audioContextRef.current) {
         audioContextRef.current.close().catch(() => {
           return;
@@ -174,27 +191,51 @@ const Main: React.FC = () => {
     if (!audioContext) {
       return;
     }
-    const buffer = audioContext.createBuffer(
+
+    const now = audioContext.currentTime;
+
+    const oscillator = audioContext.createOscillator();
+    const toneGain = audioContext.createGain();
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(1450, now);
+    oscillator.frequency.exponentialRampToValueAtTime(760, now + 0.03);
+    toneGain.gain.setValueAtTime(0.0001, now);
+    toneGain.gain.exponentialRampToValueAtTime(0.1, now + 0.005);
+    toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+    oscillator.connect(toneGain);
+    toneGain.connect(audioContext.destination);
+    oscillator.start(now);
+    oscillator.stop(now + 0.04);
+
+    const noiseBuffer = audioContext.createBuffer(
       1,
-      audioContext.sampleRate * 0.04,
+      Math.floor(audioContext.sampleRate * 0.022),
       audioContext.sampleRate,
     );
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < data.length; i += 1) {
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 8);
+    const channelData = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < channelData.length; i += 1) {
+      channelData[i] =
+        (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.2);
     }
 
-    const source = audioContext.createBufferSource();
-    const gain = audioContext.createGain();
-    gain.gain.setValueAtTime(0.18, audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(
-      0.001,
-      audioContext.currentTime + 0.04,
-    );
-    source.buffer = buffer;
-    source.connect(gain);
-    gain.connect(audioContext.destination);
-    source.start();
+    const noise = audioContext.createBufferSource();
+    const bandPass = audioContext.createBiquadFilter();
+    const noiseGain = audioContext.createGain();
+
+    noise.buffer = noiseBuffer;
+    bandPass.type = "bandpass";
+    bandPass.frequency.setValueAtTime(1650, now);
+    bandPass.Q.value = 0.95;
+
+    noiseGain.gain.setValueAtTime(0.0001, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.07, now + 0.004);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
+
+    noise.connect(bandPass);
+    bandPass.connect(noiseGain);
+    noiseGain.connect(audioContext.destination);
+    noise.start(now);
+    noise.stop(now + 0.024);
   }, [getAudioContext]);
 
   const playReelStop = React.useCallback(() => {
@@ -221,29 +262,177 @@ const Main: React.FC = () => {
     osc.stop(audioContext.currentTime + 0.14);
   }, [getAudioContext]);
 
-  const playWinMusic = React.useCallback(() => {
-    const winMusic = winMusicRef.current;
-    if (!winMusic) {
-      return;
-    }
-    winMusic.currentTime = 0;
-    winMusic.volume = 1.0;
-    winMusic.play().catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log("Audio play error:", error);
-    });
-    setShowStopMusic(true);
-  }, []);
-
   const stopWinMusic = React.useCallback(() => {
-    const winMusic = winMusicRef.current;
-    if (!winMusic) {
-      return;
+    if (celebrationHideStopTimeoutRef.current !== null) {
+      clearTrackedTimeout(celebrationHideStopTimeoutRef.current);
+      celebrationHideStopTimeoutRef.current = null;
     }
-    winMusic.pause();
-    winMusic.currentTime = 0;
+
+    celebrationSourcesRef.current.forEach((source) => {
+      try {
+        source.stop();
+      } catch {
+        return;
+      } finally {
+        source.disconnect();
+      }
+    });
+    celebrationSourcesRef.current = [];
+
+    celebrationNodesRef.current.forEach((node) => {
+      node.disconnect();
+    });
+    celebrationNodesRef.current = [];
+
     setShowStopMusic(false);
   }, []);
+
+  const playWinMusic = React.useCallback(() => {
+    const audioContext = getAudioContext();
+    if (!audioContext) {
+      return;
+    }
+
+    stopWinMusic();
+
+    const baseTime = audioContext.currentTime + 0.03;
+    const masterGain = audioContext.createGain();
+    masterGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+    masterGain.gain.exponentialRampToValueAtTime(
+      0.86,
+      audioContext.currentTime + 0.06,
+    );
+    masterGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + 2.35);
+    masterGain.connect(audioContext.destination);
+
+    celebrationNodesRef.current = [masterGain];
+
+    const tonePattern = [
+      {
+        frequency: 523.25,
+        offset: 0.0,
+        duration: 0.22,
+        type: "sawtooth" as OscillatorType,
+        gain: 0.34,
+      },
+      {
+        frequency: 659.25,
+        offset: 0.13,
+        duration: 0.24,
+        type: "triangle" as OscillatorType,
+        gain: 0.3,
+      },
+      {
+        frequency: 783.99,
+        offset: 0.28,
+        duration: 0.26,
+        type: "triangle" as OscillatorType,
+        gain: 0.29,
+      },
+      {
+        frequency: 1046.5,
+        offset: 0.45,
+        duration: 0.4,
+        type: "sine" as OscillatorType,
+        gain: 0.26,
+      },
+      {
+        frequency: 783.99,
+        offset: 0.88,
+        duration: 0.2,
+        type: "triangle" as OscillatorType,
+        gain: 0.2,
+      },
+      {
+        frequency: 1174.66,
+        offset: 1.03,
+        duration: 0.28,
+        type: "sine" as OscillatorType,
+        gain: 0.19,
+      },
+    ];
+
+    tonePattern.forEach((tone) => {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = tone.type;
+      oscillator.frequency.setValueAtTime(
+        tone.frequency,
+        baseTime + tone.offset,
+      );
+      oscillator.frequency.exponentialRampToValueAtTime(
+        tone.frequency * 1.03,
+        baseTime + tone.offset + tone.duration,
+      );
+
+      gain.gain.setValueAtTime(0.0001, baseTime + tone.offset);
+      gain.gain.exponentialRampToValueAtTime(
+        tone.gain,
+        baseTime + tone.offset + 0.03,
+      );
+      gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        baseTime + tone.offset + tone.duration,
+      );
+
+      oscillator.connect(gain);
+      gain.connect(masterGain);
+
+      celebrationNodesRef.current.push(gain);
+      celebrationSourcesRef.current.push(oscillator);
+
+      oscillator.start(baseTime + tone.offset);
+      oscillator.stop(baseTime + tone.offset + tone.duration);
+    });
+
+    const sparkleBurstOffsets = [0.55, 0.85, 1.15, 1.42];
+    sparkleBurstOffsets.forEach((offset, index) => {
+      const buffer = audioContext.createBuffer(
+        1,
+        Math.floor(audioContext.sampleRate * 0.2),
+        audioContext.sampleRate,
+      );
+      const channelData = buffer.getChannelData(0);
+      for (let i = 0; i < channelData.length; i += 1) {
+        channelData[i] =
+          (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.4);
+      }
+
+      const noise = audioContext.createBufferSource();
+      noise.buffer = buffer;
+
+      const bandPass = audioContext.createBiquadFilter();
+      bandPass.type = "bandpass";
+      bandPass.frequency.setValueAtTime(1600 + index * 420, baseTime + offset);
+      bandPass.Q.value = 1.4;
+
+      const gain = audioContext.createGain();
+      gain.gain.setValueAtTime(0.0001, baseTime + offset);
+      gain.gain.exponentialRampToValueAtTime(0.12, baseTime + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, baseTime + offset + 0.2);
+
+      noise.connect(bandPass);
+      bandPass.connect(gain);
+      gain.connect(masterGain);
+
+      celebrationNodesRef.current.push(bandPass, gain);
+      celebrationSourcesRef.current.push(noise);
+
+      noise.start(baseTime + offset);
+      noise.stop(baseTime + offset + 0.2);
+    });
+
+    setShowStopMusic(true);
+
+    const hideStopMusicId = window.setTimeout(() => {
+      setShowStopMusic(false);
+      celebrationHideStopTimeoutRef.current = null;
+      clearTrackedTimeout(hideStopMusicId);
+    }, 2600);
+    celebrationHideStopTimeoutRef.current = hideStopMusicId;
+    addTimeout(hideStopMusicId);
+  }, [getAudioContext, stopWinMusic]);
 
   const handleMaxValueChange = React.useCallback((rawValue: string): void => {
     if (rawValue === "") {
@@ -869,14 +1058,6 @@ const Main: React.FC = () => {
           automatically removed from future draws for complete fairness.
         </footer>
       </div>
-
-      <audio
-        ref={winMusicRef}
-        preload="auto"
-        onEnded={() => setShowStopMusic(false)}
-      >
-        <source src={winMusicSrc} type="audio/mp4" />
-      </audio>
     </>
   );
 };
