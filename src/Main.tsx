@@ -997,29 +997,29 @@ const Main: React.FC = () => {
       ) : null}
 
       <div className="app">
-        <img
-          className="app-chicken-noodle"
-          src={rumpumChickenSrc}
-          alt="Rumpum Chicken Noodle"
-        />
-        <img
-          className="app-veg-noodle"
-          src={rumpumVegSrc}
-          alt="Rumpum Veg Noodle"
-        />
-
         <div className="single-screen-main">
           <section
             id="draw-machine"
             className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
           >
+            {/* <img
+              className="section-brand-image section-brand-image-right"
+              src={rumpumRamailoSrc}
+              alt="Rumpum Ramailo"
+              width={1000}
+            /> */}
             <div className="section-heading">
               <div className="section-heading-main">
+                <img
+                  src={rumpumChickenSrc}
+                  alt="Rumpum Chicken Noodle"
+                  width={"100px"}
+                />
                 <h2>{eventTitle}</h2>
                 <img
-                  className="section-brand-image section-brand-image-right"
-                  src={rumpumRamailoSrc}
-                  alt="Rumpum Ramailo"
+                  src={rumpumVegSrc}
+                  alt="Rumpum Veg Noodle"
+                  width={"100px"}
                 />
               </div>
               <p>
@@ -1087,13 +1087,13 @@ const Main: React.FC = () => {
               >
                 ⏹ Stop Music
               </button>
-              <button
+              {/* <button
                 className="btn btn-copy"
                 type="button"
                 onClick={copyResult}
               >
                 📋 Copy
-              </button>
+              </button> */}
               <CSVLink
                 className="btn btn-copy"
                 data={csvData}
@@ -1104,13 +1104,13 @@ const Main: React.FC = () => {
               >
                 ⬇ Export CSV
               </CSVLink>
-              <button
+              {/* <button
                 className="btn btn-reset"
                 type="button"
                 onClick={resetExclusions}
               >
                 🔄 Reset Winners
-              </button>
+              </button> */}
             </div>
 
             <div className="status">{status}</div>
