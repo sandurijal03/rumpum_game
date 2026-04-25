@@ -43,7 +43,7 @@ body::before {
 }
 
 .app {
-  max-width: 1200px;
+  max-width: min(96vw, 1600px);
   margin: 0 auto;
   padding: 20px 16px 28px;
   position: relative;
@@ -709,6 +709,147 @@ body::before {
   letter-spacing: 0.03em;
 }
 
+.app.showcase-mode {
+  max-width: min(99vw, 2300px);
+  padding: 10px 12px 14px;
+}
+
+@media (min-width: 1200px) {
+  .app.showcase-mode {
+    padding: 12px 16px 16px;
+  }
+
+  .app.showcase-mode .single-screen-main {
+    margin-top: 6px;
+  }
+
+  .app.showcase-mode .machine {
+    margin-top: 0;
+    min-height: calc(100vh - 42px);
+    border-radius: 36px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .app.showcase-mode .section-heading {
+    margin-bottom: 18px;
+  }
+
+  .app.showcase-mode .section-heading-main {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: minmax(370px, 1fr) minmax(540px, 1.1fr) minmax(370px, 1fr);
+    gap: clamp(16px, 1.8vw, 26px);
+    padding: 18px 22px 20px;
+    border-radius: 22px;
+  }
+
+  .app.showcase-mode .heading-brand-group {
+    gap: clamp(14px, 1.2vw, 20px);
+  }
+
+  .app.showcase-mode .section-brand-image.af {
+    width: min(11vw, 170px);
+    min-width: 130px;
+  }
+
+  .app.showcase-mode .section-brand-image.ramailo {
+    width: min(23vw, 360px);
+    min-width: 260px;
+  }
+
+  .app.showcase-mode .section-brand-image.product {
+    width: min(11vw, 170px);
+    min-width: 130px;
+  }
+
+  .app.showcase-mode .heading-title-kicker {
+    font-size: 0.72rem;
+    margin-bottom: 9px;
+    letter-spacing: 0.2em;
+    padding: 6px 13px;
+  }
+
+  .app.showcase-mode .section-heading-main h2 {
+    font-size: clamp(2.5rem, 3.1vw, 3.6rem);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .app.showcase-mode .machine-lights {
+    margin-bottom: 18px;
+  }
+
+  .app.showcase-mode .bulb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .app.showcase-mode .reels-stage {
+    margin: 10px 0;
+  }
+
+  .app.showcase-mode .reels {
+    gap: 14px;
+  }
+
+  .app.showcase-mode .reel {
+    height: clamp(180px, 24vh, 260px);
+    border-radius: 20px;
+  }
+
+  .app.showcase-mode .reel::before {
+    left: 7px;
+    right: 7px;
+    height: clamp(56px, 7.5vh, 78px);
+    border-radius: 14px;
+  }
+
+  .app.showcase-mode .d.mid {
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
+  }
+
+  .app.showcase-mode .d.side {
+    font-size: clamp(1.9rem, 3.4vw, 3rem);
+  }
+
+  .app.showcase-mode .win-banner {
+    margin: 20px 0 18px;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .app.showcase-mode .win-label {
+    font-size: 0.9rem;
+    margin-bottom: 9px;
+  }
+
+  .app.showcase-mode .win-number {
+    font-size: clamp(3.2rem, 8vw, 7rem);
+    letter-spacing: 0.16em;
+  }
+
+  .app.showcase-mode .win-meta {
+    margin-top: 10px;
+    font-size: 1rem;
+  }
+
+  .app.showcase-mode .controls {
+    margin: 18px 0 8px;
+    gap: 12px;
+  }
+
+  .app.showcase-mode .btn {
+    padding: 14px 24px;
+    font-size: 1.08rem;
+    letter-spacing: 0.08em;
+  }
+}
+
 .machine.celebrating .bulb {
   animation-duration: 0.24s;
 }
@@ -908,6 +1049,196 @@ body::before {
   100% {
     transform: translateY(-34px) scale(0.93);
     filter: blur(1px);
+  }
+}
+
+@media (min-width: 1600px) {
+  .app {
+    max-width: min(96vw, 1820px);
+    padding: 28px 24px 34px;
+  }
+
+  .single-screen-main {
+    margin-top: 20px;
+  }
+
+  .machine {
+    border-radius: 36px;
+    padding: clamp(20px, 1.8vw, 30px);
+  }
+
+  .section-heading {
+    margin-bottom: 20px;
+  }
+
+  .section-heading-main {
+    max-width: 1420px;
+    grid-template-columns: minmax(320px, 1fr) minmax(460px, 1.2fr) minmax(320px, 1fr);
+    padding: 16px 22px 18px;
+    border-radius: 22px;
+  }
+
+  .heading-brand-group {
+    gap: 16px;
+  }
+
+  .section-brand-image.af {
+    width: min(12vw, 146px);
+    min-width: 102px;
+  }
+
+  .section-brand-image.ramailo {
+    width: min(20vw, 300px);
+    min-width: 180px;
+  }
+
+  .section-brand-image.product {
+    width: min(12vw, 146px);
+    min-width: 102px;
+  }
+
+  .heading-title-kicker {
+    margin-bottom: 8px;
+    padding: 5px 12px;
+    font-size: 0.68rem;
+  }
+
+  .section-heading-main h2 {
+    font-size: clamp(2rem, 2.8vw, 2.85rem);
+    letter-spacing: 0.06em;
+  }
+
+  .machine-lights {
+    margin-bottom: 16px;
+  }
+
+  .bulb {
+    width: 20px;
+    height: 20px;
+  }
+
+  .reels {
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .reel {
+    height: 150px;
+    border-radius: 18px;
+  }
+
+  .reel::before {
+    left: 6px;
+    right: 6px;
+    height: 52px;
+    border-radius: 12px;
+  }
+
+  .d.mid {
+    font-size: clamp(2.3rem, 4vw, 3.4rem);
+  }
+
+  .d.side {
+    font-size: clamp(1.7rem, 2.9vw, 2.4rem);
+  }
+
+  .win-banner {
+    margin: 16px 0;
+    padding: 16px;
+  }
+
+  .win-label {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+
+  .win-number {
+    font-size: clamp(2.4rem, 5.2vw, 4.6rem);
+    letter-spacing: 0.15em;
+  }
+
+  .win-meta {
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+
+  .controls {
+    margin: 20px 0 12px;
+    gap: 12px;
+  }
+
+  .btn {
+    padding: 12px 22px;
+    font-size: 1rem;
+  }
+
+  .settings,
+  .history-wrap {
+    padding: 22px;
+  }
+
+  .settings h3,
+  .history-wrap h3 {
+    font-size: 1.12rem;
+  }
+
+  .field input {
+    padding: 12px 14px;
+    font-size: 1rem;
+  }
+
+  .h-item {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+
+  .h-time,
+  .h-title {
+    font-size: 0.84rem;
+  }
+}
+
+@media (min-width: 2200px) {
+  .app {
+    max-width: min(95vw, 2050px);
+  }
+
+  .machine {
+    border-radius: 42px;
+    padding: 28px 30px;
+  }
+
+  .section-heading-main {
+    max-width: 1560px;
+    grid-template-columns: minmax(360px, 1fr) minmax(520px, 1.2fr) minmax(360px, 1fr);
+    padding: 18px 24px 20px;
+  }
+
+  .section-brand-image.af {
+    width: min(11vw, 156px);
+    min-width: 120px;
+  }
+
+  .section-brand-image.ramailo {
+    width: min(22vw, 330px);
+    min-width: 220px;
+  }
+
+  .section-brand-image.product {
+    width: min(11vw, 156px);
+    min-width: 120px;
+  }
+
+  .section-heading-main h2 {
+    font-size: clamp(2.3rem, 2.6vw, 3.1rem);
+  }
+
+  .reel {
+    height: 166px;
+  }
+
+  .win-number {
+    font-size: clamp(2.8rem, 4.8vw, 5rem);
   }
 }
 

@@ -999,6 +999,24 @@ const Main: React.FC = () => {
     [],
   );
 
+  const isShowcaseMode = React.useMemo(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const showcase = (params.get("showcase") || "").toLowerCase();
+    const mode = (params.get("mode") || "").toLowerCase();
+
+    return (
+      showcase === "1" ||
+      showcase === "true" ||
+      showcase === "yes" ||
+      mode === "showcase" ||
+      mode === "stage"
+    );
+  }, []);
+
   return (
     <>
       {floatingWinner ? (
@@ -1038,7 +1056,7 @@ const Main: React.FC = () => {
         </div>
       ) : null}
 
-      <div className="app">
+      <div className={`app ${isShowcaseMode ? "showcase-mode" : ""}`}>
         <div className="single-screen-main">
           <section
             id="draw-machine"
@@ -1172,130 +1190,136 @@ const Main: React.FC = () => {
 
             {/* <div className="status">{status}</div> */}
 
-            <div className="panel-grid">
-              <section className="settings">
-                <h3>Draw Settings</h3>
-                <div className="field-row">
-                  <div className="field">
-                    <label htmlFor="minVal">Minimum Number</label>
-                    <input
-                      id="minVal"
-                      type="number"
-                      value={minVal}
-                      min={0}
-                      max={MAX_DRAW_NUMBER}
-                      disabled={true}
-                      onChange={(event) => setMinVal(event.target.value)}
-                      style={{ fontSize: "2rem" }}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="maxVal">
-                      Maximum Number (up to 10 digits)
-                    </label>
-                    <input
-                      id="maxVal"
-                      type="number"
-                      value={maxVal}
-                      min={0}
-                      max={MAX_DRAW_NUMBER}
-                      disabled={true}
-                      onChange={(event) =>
-                        handleMaxValueChange(event.target.value)
-                      }
-                      style={{ fontSize: "2rem" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="field-row">
-                  <div className="field">
-                    <label htmlFor="eventTitle">Event Title</label>
-                    <input
-                      id="eventTitle"
-                      type="text"
-                      value={eventTitle}
-                      onChange={(event) => setEventTitle(event.target.value)}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="spinSpeed">Spin Speed (ms)</label>
-                    <input
-                      id="spinSpeed"
-                      type="number"
-                      value={spinSpeed}
-                      min={30}
-                      max={300}
-                      onChange={(event) => setSpinSpeed(event.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="field-row">
-                  <div className="field">
-                    <label htmlFor="winnerFloatDurationMs">
-                      Winner Float Duration (ms)
-                    </label>
-                    <input
-                      id="winnerFloatDurationMs"
-                      type="text"
-                      value={winnerFloatDurationMs}
-                      onChange={(event) =>
-                        handleWinnerFloatDurationChange(event.target.value)
-                      }
-                      // onBlur={() => {
-                      //   if (winnerFloatDurationMs === "") {
-                      //     setWinnerFloatDurationMs("3200");
-                      //   }
-                      // }}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="winnerFloatDurationPreview">Preview</label>
-                    <input
-                      id="winnerFloatDurationPreview"
-                      type="text"
-                      value={`${(winnerFloatDuration / 1000).toFixed(1)} seconds`}
-                      readOnly
-                    />
-                  </div>
-                </div>
-
-                <div className="remaining">{remainingText}</div>
-              </section>
-
-              <section className="history-wrap">
-                <h3>Recent Winners</h3>
-                <div className="history-list">
-                  {history.length === 0 ? (
-                    <div className="history-empty">
-                      No draws yet. Press SPIN DRAW to start the first winner.
+            {isShowcaseMode ? null : (
+              <div className="panel-grid">
+                <section className="settings">
+                  <h3>Draw Settings</h3>
+                  <div className="field-row">
+                    <div className="field">
+                      <label htmlFor="minVal">Minimum Number</label>
+                      <input
+                        id="minVal"
+                        type="number"
+                        value={minVal}
+                        min={0}
+                        max={MAX_DRAW_NUMBER}
+                        disabled={true}
+                        onChange={(event) => setMinVal(event.target.value)}
+                        style={{ fontSize: "2rem" }}
+                      />
                     </div>
-                  ) : (
-                    visibleHistory.map((item, index) => (
-                      <div
-                        className="h-item"
-                        key={`${item.code}-${item.time}-${index}`}
-                      >
-                        <span>
-                          {index + 1}.{" "}
-                          <span className="h-code">{item.code}</span>{" "}
-                          <span className="h-title">{item.title}</span>
-                        </span>
-                        <span className="h-time">{item.time}</span>
+                    <div className="field">
+                      <label htmlFor="maxVal">
+                        Maximum Number (up to 10 digits)
+                      </label>
+                      <input
+                        id="maxVal"
+                        type="number"
+                        value={maxVal}
+                        min={0}
+                        max={MAX_DRAW_NUMBER}
+                        disabled={true}
+                        onChange={(event) =>
+                          handleMaxValueChange(event.target.value)
+                        }
+                        style={{ fontSize: "2rem" }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="field-row">
+                    <div className="field">
+                      <label htmlFor="eventTitle">Event Title</label>
+                      <input
+                        id="eventTitle"
+                        type="text"
+                        value={eventTitle}
+                        onChange={(event) => setEventTitle(event.target.value)}
+                      />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="spinSpeed">Spin Speed (ms)</label>
+                      <input
+                        id="spinSpeed"
+                        type="number"
+                        value={spinSpeed}
+                        min={30}
+                        max={300}
+                        onChange={(event) => setSpinSpeed(event.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="field-row">
+                    <div className="field">
+                      <label htmlFor="winnerFloatDurationMs">
+                        Winner Float Duration (ms)
+                      </label>
+                      <input
+                        id="winnerFloatDurationMs"
+                        type="text"
+                        value={winnerFloatDurationMs}
+                        onChange={(event) =>
+                          handleWinnerFloatDurationChange(event.target.value)
+                        }
+                        // onBlur={() => {
+                        //   if (winnerFloatDurationMs === "") {
+                        //     setWinnerFloatDurationMs("3200");
+                        //   }
+                        // }}
+                      />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="winnerFloatDurationPreview">
+                        Preview
+                      </label>
+                      <input
+                        id="winnerFloatDurationPreview"
+                        type="text"
+                        value={`${(winnerFloatDuration / 1000).toFixed(1)} seconds`}
+                        readOnly
+                      />
+                    </div>
+                  </div>
+
+                  <div className="remaining">{remainingText}</div>
+                </section>
+
+                <section className="history-wrap">
+                  <h3>Recent Winners</h3>
+                  <div className="history-list">
+                    {history.length === 0 ? (
+                      <div className="history-empty">
+                        No draws yet. Press SPIN DRAW to start the first winner.
                       </div>
-                    ))
-                  )}
-                </div>
-              </section>
-            </div>
+                    ) : (
+                      visibleHistory.map((item, index) => (
+                        <div
+                          className="h-item"
+                          key={`${item.code}-${item.time}-${index}`}
+                        >
+                          <span>
+                            {index + 1}.{" "}
+                            <span className="h-code">{item.code}</span>{" "}
+                            <span className="h-title">{item.title}</span>
+                          </span>
+                          <span className="h-time">{item.time}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </section>
+              </div>
+            )}
           </section>
         </div>
 
-        <footer className="site-footer">
-          RUMPUM LUCKY DRAW {new Date().getFullYear()} | Winners are
-          automatically removed from future draws for complete fairness.
-        </footer>
+        {isShowcaseMode ? null : (
+          <footer className="site-footer">
+            RUMPUM LUCKY DRAW {new Date().getFullYear()} | Winners are
+            automatically removed from future draws for complete fairness.
+          </footer>
+        )}
       </div>
 
       <audio ref={winningAudioRef} preload="auto">
