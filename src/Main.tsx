@@ -201,89 +201,72 @@ const Main: React.FC = () => {
     }
 
     const now = audioContext.currentTime;
-    const pitchJitter = 1 + (Math.random() - 0.5) * 0.04;
+    const pitchJitter = 1 + (Math.random() - 0.5) * 0.05;
 
-    const attackOsc = audioContext.createOscillator();
-    const attackGain = audioContext.createGain();
-    attackOsc.type = "square";
-    attackOsc.frequency.setValueAtTime(2200 * pitchJitter, now);
-    attackOsc.frequency.exponentialRampToValueAtTime(
+    const glide = audioContext.createOscillator();
+    const glideGain = audioContext.createGain();
+    glide.type = "triangle";
+    glide.frequency.setValueAtTime(1040 * pitchJitter, now);
+    glide.frequency.exponentialRampToValueAtTime(
+      560 * pitchJitter,
+      now + 0.038,
+    );
+    glideGain.gain.setValueAtTime(0.0001, now);
+    glideGain.gain.exponentialRampToValueAtTime(0.06, now + 0.004);
+    glideGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.042);
+
+    const snap = audioContext.createOscillator();
+    const snapGain = audioContext.createGain();
+    snap.type = "square";
+    snap.frequency.setValueAtTime(1800 * pitchJitter, now);
+    snap.frequency.exponentialRampToValueAtTime(
       1200 * pitchJitter,
-      now + 0.016,
+      now + 0.012,
     );
-    attackGain.gain.setValueAtTime(0.0001, now);
-    attackGain.gain.exponentialRampToValueAtTime(0.11, now + 0.002);
-    attackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
-    attackOsc.connect(attackGain);
-    attackGain.connect(audioContext.destination);
-    attackOsc.start(now);
-    attackOsc.stop(now + 0.02);
-
-    const bodyOsc = audioContext.createOscillator();
-    const bodyGain = audioContext.createGain();
-    bodyOsc.type = "triangle";
-    bodyOsc.frequency.setValueAtTime(1150 * pitchJitter, now);
-    bodyOsc.frequency.exponentialRampToValueAtTime(
-      720 * pitchJitter,
-      now + 0.024,
-    );
-    bodyGain.gain.setValueAtTime(0.0001, now);
-    bodyGain.gain.exponentialRampToValueAtTime(0.042, now + 0.004);
-    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.027);
-    bodyOsc.connect(bodyGain);
-    bodyGain.connect(audioContext.destination);
-    bodyOsc.start(now);
-    bodyOsc.stop(now + 0.03);
-
-    const pingOsc = audioContext.createOscillator();
-    const pingGain = audioContext.createGain();
-    pingOsc.type = "sine";
-    pingOsc.frequency.setValueAtTime(2700 * pitchJitter, now);
-    pingOsc.frequency.exponentialRampToValueAtTime(
-      1850 * pitchJitter,
-      now + 0.01,
-    );
-    pingGain.gain.setValueAtTime(0.0001, now);
-    pingGain.gain.exponentialRampToValueAtTime(0.03, now + 0.0015);
-    pingGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
-    pingOsc.connect(pingGain);
-    pingGain.connect(audioContext.destination);
-    pingOsc.start(now);
-    pingOsc.stop(now + 0.013);
+    snapGain.gain.setValueAtTime(0.0001, now);
+    snapGain.gain.exponentialRampToValueAtTime(0.03, now + 0.001);
+    snapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
 
     const noiseBuffer = audioContext.createBuffer(
       1,
-      Math.floor(audioContext.sampleRate * 0.014),
+      Math.floor(audioContext.sampleRate * 0.018),
       audioContext.sampleRate,
     );
     const channelData = noiseBuffer.getChannelData(0);
     for (let i = 0; i < channelData.length; i += 1) {
       channelData[i] =
-        (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.8);
+        (Math.random() * 2 - 1) * Math.pow(1 - i / channelData.length, 2.4);
     }
 
     const noise = audioContext.createBufferSource();
-    const highPass = audioContext.createBiquadFilter();
     const bandPass = audioContext.createBiquadFilter();
     const noiseGain = audioContext.createGain();
 
     noise.buffer = noiseBuffer;
-    highPass.type = "highpass";
-    highPass.frequency.setValueAtTime(1300, now);
     bandPass.type = "bandpass";
-    bandPass.frequency.setValueAtTime(2550, now);
-    bandPass.Q.value = 1.35;
+    bandPass.frequency.setValueAtTime(1700, now);
+    bandPass.Q.value = 1.1;
 
     noiseGain.gain.setValueAtTime(0.0001, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.042, now + 0.0025);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+    noiseGain.gain.exponentialRampToValueAtTime(0.022, now + 0.003);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
 
-    noise.connect(highPass);
-    highPass.connect(bandPass);
+    glide.connect(glideGain);
+    glideGain.connect(audioContext.destination);
+
+    snap.connect(snapGain);
+    snapGain.connect(audioContext.destination);
+
+    noise.connect(bandPass);
     bandPass.connect(noiseGain);
     noiseGain.connect(audioContext.destination);
+
+    glide.start(now);
+    glide.stop(now + 0.045);
+    snap.start(now);
+    snap.stop(now + 0.018);
     noise.start(now);
-    noise.stop(now + 0.014);
+    noise.stop(now + 0.02);
   }, [getAudioContext]);
 
   const playReelStop = React.useCallback(() => {
@@ -291,23 +274,76 @@ const Main: React.FC = () => {
     if (!audioContext) {
       return;
     }
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.type = "square";
-    osc.frequency.setValueAtTime(320, audioContext.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(
-      80,
-      audioContext.currentTime + 0.12,
-    );
-    gain.gain.setValueAtTime(0.22, audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(
-      0.001,
-      audioContext.currentTime + 0.14,
-    );
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    osc.start();
-    osc.stop(audioContext.currentTime + 0.14);
+    const now = audioContext.currentTime;
+
+    const drum = audioContext.createOscillator();
+    const drumGain = audioContext.createGain();
+    drum.type = "triangle";
+    drum.frequency.setValueAtTime(240, now);
+    drum.frequency.exponentialRampToValueAtTime(95, now + 0.16);
+    drumGain.gain.setValueAtTime(0.19, now);
+    drumGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    drum.connect(drumGain);
+    drumGain.connect(audioContext.destination);
+
+    const click = audioContext.createOscillator();
+    const clickGain = audioContext.createGain();
+    click.type = "sine";
+    click.frequency.setValueAtTime(1200, now);
+    click.frequency.exponentialRampToValueAtTime(840, now + 0.05);
+    clickGain.gain.setValueAtTime(0.0001, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.06, now + 0.004);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+    click.connect(clickGain);
+    clickGain.connect(audioContext.destination);
+
+    drum.start(now);
+    drum.stop(now + 0.2);
+    click.start(now);
+    click.stop(now + 0.09);
+  }, [getAudioContext]);
+
+  const playSelectionHit = React.useCallback(() => {
+    const audioContext = getAudioContext();
+    if (!audioContext) {
+      return;
+    }
+
+    const baseTime = audioContext.currentTime;
+    const masterGain = audioContext.createGain();
+    masterGain.gain.setValueAtTime(0.0001, baseTime);
+    masterGain.gain.exponentialRampToValueAtTime(0.34, baseTime + 0.02);
+    masterGain.gain.exponentialRampToValueAtTime(0.0001, baseTime + 0.9);
+    masterGain.connect(audioContext.destination);
+
+    const notePattern = [
+      { freq: 783.99, offset: 0.0, type: "triangle" as OscillatorType },
+      { freq: 1174.66, offset: 0.09, type: "triangle" as OscillatorType },
+      { freq: 1567.98, offset: 0.18, type: "sine" as OscillatorType },
+      { freq: 2093.0, offset: 0.28, type: "sine" as OscillatorType },
+    ];
+
+    notePattern.forEach((note) => {
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      const noteStart = baseTime + note.offset;
+
+      osc.type = note.type;
+      osc.frequency.setValueAtTime(note.freq, noteStart);
+      osc.frequency.exponentialRampToValueAtTime(
+        note.freq * 0.992,
+        noteStart + 0.22,
+      );
+
+      gain.gain.setValueAtTime(0.0001, noteStart);
+      gain.gain.exponentialRampToValueAtTime(0.2, noteStart + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.24);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(noteStart);
+      osc.stop(noteStart + 0.25);
+    });
   }, [getAudioContext]);
 
   const stopWinMusic = React.useCallback(() => {
@@ -351,7 +387,7 @@ const Main: React.FC = () => {
     const winningAudio = winningAudioRef.current;
     if (winningAudio) {
       winningAudio.currentTime = 0;
-      winningAudio.volume = 1;
+      winningAudio.volume = 0.9;
       winningAudio.play().catch(() => {
         return;
       });
@@ -820,7 +856,11 @@ const Main: React.FC = () => {
                 nextDigits[i] = digits[i];
                 return nextDigits;
               });
-              playReelStop();
+              if (i === activeReelCount - 1) {
+                playSelectionHit();
+              } else {
+                playReelStop();
+              }
               resolve();
             }
           }, speed);
@@ -868,6 +908,7 @@ const Main: React.FC = () => {
     pickWinner,
     playClick,
     playReelStop,
+    playSelectionHit,
     playWinMusic,
     reelCount,
     spinSpeed,
@@ -1003,6 +1044,12 @@ const Main: React.FC = () => {
             id="draw-machine"
             className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
           >
+            {/* <img
+              className="section-brand-image"
+              src={rumpumRamailoSrc}
+              alt="Rumpum Ramailo"
+              width={"120px"}
+            /> */}
             <div className="section-heading">
               <div className="section-heading-main">
                 <img
@@ -1184,18 +1231,16 @@ const Main: React.FC = () => {
                     </label>
                     <input
                       id="winnerFloatDurationMs"
-                      type="number"
+                      type="text"
                       value={winnerFloatDurationMs}
-                      min={1000}
-                      max={12000}
                       onChange={(event) =>
                         handleWinnerFloatDurationChange(event.target.value)
                       }
-                      onBlur={() => {
-                        if (winnerFloatDurationMs === "") {
-                          setWinnerFloatDurationMs("3200");
-                        }
-                      }}
+                      // onBlur={() => {
+                      //   if (winnerFloatDurationMs === "") {
+                      //     setWinnerFloatDurationMs("3200");
+                      //   }
+                      // }}
                     />
                   </div>
                   <div className="field">
