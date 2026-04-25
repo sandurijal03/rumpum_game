@@ -379,6 +379,69 @@ body::before {
   text-wrap: balance;
 }
 
+@media (min-width: 981px) and (max-width: 1599px) {
+  .app:not(.showcase-mode) .section-heading {
+    margin-bottom: 18px;
+  }
+
+  .app:not(.showcase-mode) .section-heading-main {
+    max-width: 1260px;
+    grid-template-columns: minmax(290px, 1fr) minmax(380px, 1.1fr) minmax(290px, 1fr);
+    gap: clamp(12px, 1.35vw, 18px);
+    padding: 14px 18px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 214, 146, 0.46);
+    background:
+      radial-gradient(circle at 50% -30%, rgba(255, 220, 126, 0.34), transparent 52%),
+      linear-gradient(96deg, rgba(110, 37, 17, 0.46) 0%, rgba(171, 68, 20, 0.38) 30%, rgba(213, 112, 28, 0.34) 50%, rgba(171, 68, 20, 0.38) 70%, rgba(110, 37, 17, 0.46) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 237, 198, 0.28),
+      0 12px 26px rgba(23, 8, 2, 0.4);
+  }
+
+  .app:not(.showcase-mode) .heading-title-wrap {
+    padding: 10px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 214, 142, 0.34);
+    background: linear-gradient(180deg, rgba(83, 28, 10, 0.34), rgba(83, 28, 10, 0.14));
+    box-shadow: inset 0 1px 0 rgba(255, 238, 201, 0.18);
+  }
+
+  .app:not(.showcase-mode) .heading-title-kicker {
+    margin-bottom: 7px;
+    padding: 5px 11px;
+    font-size: 0.64rem;
+    letter-spacing: 0.18em;
+  }
+
+  .app:not(.showcase-mode) .section-heading-main h2 {
+    font-size: clamp(1.55rem, 2.35vw, 2.45rem);
+    line-height: 1.06;
+    letter-spacing: 0.06em;
+    color: #ffeaad;
+    text-shadow: 0 2px 0 rgba(76, 23, 4, 0.78), 0 0 18px rgba(255, 199, 80, 0.25);
+  }
+
+  .app:not(.showcase-mode) .heading-brand-group {
+    gap: clamp(10px, 1.1vw, 16px);
+  }
+
+  .app:not(.showcase-mode) .section-brand-image.af {
+    width: min(11vw, 128px);
+    min-width: 88px;
+  }
+
+  .app:not(.showcase-mode) .section-brand-image.ramailo {
+    width: min(17vw, 250px);
+    min-width: 152px;
+  }
+
+  .app:not(.showcase-mode) .section-brand-image.product {
+    width: min(11vw, 128px);
+    min-width: 90px;
+  }
+}
+
 .machine-lights {
   display: flex;
   justify-content: space-between;
