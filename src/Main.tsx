@@ -1052,29 +1052,36 @@ const Main: React.FC = () => {
             /> */}
             <div className="section-heading">
               <div className="section-heading-main">
-                <img
-                  className="section-brand-image af"
-                  src={af}
-                  alt="Rumpum Ramailo"
-                />
-                <img
-                  className="section-brand-image ramailo"
-                  src={rumpumRamailoSrc}
-                  alt="Rumpum Ramailo"
-                />
-                <h2>{eventTitle}</h2>
-                <img
-                  className="section-brand-image"
-                  src={rumpumChickenSrc}
-                  alt="Rumpum Chicken Noodle"
-                  width={"100px"}
-                />
-                <img
-                  className="section-brand-image "
-                  src={rumpumVegSrc}
-                  alt="Rumpum Veg Noodle"
-                  width={"100px"}
-                />
+                <div className="heading-brand-group left" aria-hidden="true">
+                  <img
+                    className="section-brand-image af"
+                    src={af}
+                    alt="Asian Foods"
+                  />
+                  <img
+                    className="section-brand-image ramailo"
+                    src={rumpumRamailoSrc}
+                    alt="Rumpum Ramailo"
+                  />
+                </div>
+
+                <div className="heading-title-wrap">
+                  <span className="heading-title-kicker">Lucky Draw Event</span>
+                  <h2>{eventTitle}</h2>
+                </div>
+
+                <div className="heading-brand-group right" aria-hidden="true">
+                  <img
+                    className="section-brand-image product"
+                    src={rumpumChickenSrc}
+                    alt="Rumpum Chicken Noodle"
+                  />
+                  <img
+                    className="section-brand-image product"
+                    src={rumpumVegSrc}
+                    alt="Rumpum Veg Noodle"
+                  />
+                </div>
               </div>
             </div>
 
