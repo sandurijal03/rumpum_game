@@ -354,8 +354,8 @@ body::before {
 }
 
 .section-brand-image.af {
-  width: min(12vw, 112px);
-  min-width: 74px;
+  width: min(13vw, 140px);
+  min-width: 96px;
 }
 
 .section-brand-image.ramailo {
@@ -364,8 +364,8 @@ body::before {
 }
 
 .section-brand-image.product {
-  width: min(12vw, 114px);
-  min-width: 72px;
+  width: min(14vw, 168px);
+  min-width: 96px;
 }
 
 .section-heading-main h2 {
@@ -427,8 +427,8 @@ body::before {
   }
 
   .app:not(.showcase-mode) .section-brand-image.af {
-    width: min(11vw, 128px);
-    min-width: 88px;
+    width: min(12vw, 156px);
+    min-width: 108px;
   }
 
   .app:not(.showcase-mode) .section-brand-image.ramailo {
@@ -437,8 +437,8 @@ body::before {
   }
 
   .app:not(.showcase-mode) .section-brand-image.product {
-    width: min(11vw, 128px);
-    min-width: 90px;
+    width: min(13vw, 170px);
+    min-width: 110px;
   }
 }
 
@@ -814,8 +814,8 @@ body::before {
   }
 
   .app.showcase-mode .section-brand-image.af {
-    width: min(11vw, 170px);
-    min-width: 130px;
+    width: clamp(170px, 12vw, 230px);
+    min-width: 170px;
   }
 
   .app.showcase-mode .section-brand-image.ramailo {
@@ -824,8 +824,8 @@ body::before {
   }
 
   .app.showcase-mode .section-brand-image.product {
-    width: min(11vw, 170px);
-    min-width: 130px;
+    width: clamp(220px, 14vw, 280px);
+    min-width: 220px;
   }
 
   .app.showcase-mode .heading-title-kicker {
@@ -1146,8 +1146,8 @@ body::before {
   }
 
   .section-brand-image.af {
-    width: min(12vw, 146px);
-    min-width: 102px;
+    width: clamp(168px, 11.2vw, 220px);
+    min-width: 168px;
   }
 
   .section-brand-image.ramailo {
@@ -1156,8 +1156,8 @@ body::before {
   }
 
   .section-brand-image.product {
-    width: min(12vw, 146px);
-    min-width: 102px;
+    width: clamp(180px, 12vw, 230px);
+    min-width: 180px;
   }
 
   .heading-title-kicker {
@@ -1261,6 +1261,28 @@ body::before {
   }
 }
 
+@media (min-width: 1900px) and (max-width: 2100px) {
+  .section-brand-image.af {
+    width: clamp(220px, 12.2vw, 270px);
+    min-width: 220px;
+  }
+
+  .app.showcase-mode .section-brand-image.af {
+    width: clamp(265px, 14.2vw, 330px);
+    min-width: 265px;
+  }
+
+  .section-brand-image.product {
+    width: clamp(280px, 16vw, 340px);
+    min-width: 280px;
+  }
+
+  .app.showcase-mode .section-brand-image.product {
+    width: clamp(330px, 19vw, 400px);
+    min-width: 330px;
+  }
+}
+
 @media (min-width: 2200px) {
   .app {
     max-width: min(95vw, 2050px);
@@ -1278,8 +1300,8 @@ body::before {
   }
 
   .section-brand-image.af {
-    width: min(11vw, 156px);
-    min-width: 120px;
+    width: clamp(170px, 10.5vw, 220px);
+    min-width: 170px;
   }
 
   .section-brand-image.ramailo {
@@ -1302,6 +1324,284 @@ body::before {
 
   .win-number {
     font-size: clamp(2.8rem, 4.8vw, 5rem);
+  }
+}
+
+@media (min-width: 1200px) and (max-height: 930px) {
+  .app.showcase-mode {
+    padding: 4px 8px 8px;
+  }
+
+  .app.showcase-mode .single-screen-main {
+    margin-top: 0;
+  }
+
+  .app.showcase-mode .machine {
+    min-height: auto;
+    padding: 8px 14px 82px;
+    border-radius: 28px;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .app.showcase-mode .section-heading {
+    margin-bottom: 8px;
+  }
+
+  .app.showcase-mode .section-heading-main {
+    grid-template-columns: minmax(280px, 1fr) minmax(420px, 1.1fr) minmax(280px, 1fr);
+    gap: clamp(10px, 1.2vw, 16px);
+    padding: 10px 14px 12px;
+  }
+
+  .app.showcase-mode .section-brand-image.af {
+    width: clamp(128px, 9.6vw, 176px);
+    min-width: 128px;
+  }
+
+  .app.showcase-mode .section-brand-image.ramailo {
+    width: min(16vw, 245px);
+    min-width: 168px;
+  }
+
+  .app.showcase-mode .section-brand-image.product {
+    width: clamp(184px, 11.6vw, 240px);
+    min-width: 184px;
+  }
+
+  .app.showcase-mode .section-heading-main h2 {
+    font-size: clamp(1.72rem, 2.25vw, 2.25rem);
+  }
+
+  .app.showcase-mode .heading-title-kicker {
+    margin-bottom: 5px;
+    font-size: 0.62rem;
+    padding: 4px 10px;
+  }
+
+  .app.showcase-mode .machine-lights {
+    margin-bottom: 8px;
+  }
+
+  .app.showcase-mode .bulb {
+    width: 15px;
+    height: 15px;
+  }
+
+  .app.showcase-mode .reels-stage {
+    margin: 2px 0;
+  }
+
+  .app.showcase-mode .reel {
+    height: clamp(112px, 14.2vh, 150px);
+  }
+
+  .app.showcase-mode .reel::before {
+    height: clamp(36px, 5.2vh, 48px);
+  }
+
+  .app.showcase-mode .d.mid {
+    font-size: clamp(1.8rem, 3.35vw, 2.7rem);
+  }
+
+  .app.showcase-mode .d.side {
+    font-size: clamp(1.26rem, 2.25vw, 1.95rem);
+  }
+
+  .app.showcase-mode .win-banner {
+    margin: 6px 0 4px;
+    padding: 9px;
+  }
+
+  .app.showcase-mode .win-label {
+    font-size: 0.68rem;
+    margin-bottom: 4px;
+  }
+
+  .app.showcase-mode .win-number {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .app.showcase-mode .win-meta {
+    margin-top: 4px;
+    font-size: 0.74rem;
+  }
+
+  .app.showcase-mode .controls {
+    position: fixed;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    z-index: 30;
+    margin: 0;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 214, 146, 0.32);
+    background: rgba(45, 14, 5, 0.62);
+    backdrop-filter: blur(2px);
+  }
+
+  .app.showcase-mode .btn {
+    padding: 9px 16px;
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 1200px) and (max-height: 820px) {
+  .app.showcase-mode .section-heading-main {
+    grid-template-columns: minmax(220px, 1fr) minmax(360px, 1.2fr) minmax(220px, 1fr);
+    gap: 10px;
+    padding: 8px 12px 10px;
+  }
+
+  .app.showcase-mode .section-brand-image.af {
+    width: clamp(108px, 8.2vw, 150px);
+    min-width: 108px;
+  }
+
+  .app.showcase-mode .section-brand-image.ramailo {
+    width: min(14vw, 205px);
+    min-width: 146px;
+  }
+
+  .app.showcase-mode .section-brand-image.product {
+    width: clamp(154px, 10vw, 210px);
+    min-width: 154px;
+  }
+
+  .app.showcase-mode .section-heading-main h2 {
+    font-size: clamp(1.45rem, 1.95vw, 1.95rem);
+  }
+
+  .app.showcase-mode .reel {
+    height: clamp(98px, 12.2vh, 126px);
+  }
+
+  .app.showcase-mode .reel::before {
+    height: clamp(30px, 4.5vh, 40px);
+  }
+
+  .app.showcase-mode .win-meta {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) and (max-height: 950px) {
+  .app:not(.showcase-mode) .machine {
+    padding: 10px 12px 12px;
+  }
+
+  .app:not(.showcase-mode) .section-heading-main {
+    grid-template-columns: minmax(200px, 0.95fr) minmax(360px, 1.2fr) minmax(280px, 1.15fr);
+    gap: clamp(8px, 1vw, 14px);
+    padding: 10px 12px 12px;
+    overflow: visible;
+  }
+
+  .app:not(.showcase-mode) .heading-brand-group {
+    gap: clamp(6px, 0.8vw, 10px);
+  }
+
+  .app:not(.showcase-mode) .section-brand-image.af {
+    width: clamp(112px, 8.8vw, 154px);
+    min-width: 112px;
+    transform: scale(1.22);
+    transform-origin: left center;
+  }
+
+  .app:not(.showcase-mode) .section-brand-image.ramailo {
+    width: min(13vw, 190px);
+    min-width: 126px;
+  }
+
+  .app:not(.showcase-mode) .heading-brand-group.right {
+    padding-right: 8px;
+  }
+
+  .app:not(.showcase-mode) .section-brand-image.product {
+    width: clamp(230px, 14.8vw, 320px);
+    min-width: 230px;
+    transform: scale(1.16);
+    transform-origin: right center;
+  }
+
+  .app:not(.showcase-mode) .section-heading-main h2 {
+    font-size: clamp(1.65rem, 2.25vw, 2.25rem);
+  }
+
+  .app:not(.showcase-mode) .heading-title-kicker {
+    margin-bottom: 5px;
+    font-size: 0.62rem;
+    padding: 4px 10px;
+  }
+
+  .app:not(.showcase-mode) .section-heading {
+    margin-bottom: 8px;
+  }
+
+  .app:not(.showcase-mode) .machine-lights {
+    margin-bottom: 8px;
+  }
+
+  .app:not(.showcase-mode) .bulb {
+    width: 14px;
+    height: 14px;
+  }
+
+  .app:not(.showcase-mode) .reels {
+    margin: 4px 0;
+    gap: 8px;
+  }
+
+  .app:not(.showcase-mode) .reel {
+    height: clamp(100px, 11.8vh, 126px);
+  }
+
+  .app:not(.showcase-mode) .reel::before {
+    height: clamp(31px, 4.2vh, 40px);
+  }
+
+  .app:not(.showcase-mode) .d.mid {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  }
+
+  .app:not(.showcase-mode) .d.side {
+    font-size: clamp(1.24rem, 2.3vw, 1.9rem);
+  }
+
+  .app:not(.showcase-mode) .win-banner {
+    margin: 6px 0;
+    padding: 8px;
+  }
+
+  .app:not(.showcase-mode) .win-number {
+    font-size: clamp(1.9rem, 4.2vw, 3rem);
+  }
+
+  .app:not(.showcase-mode) .win-meta {
+    margin-top: 4px;
+    font-size: 0.72rem;
+  }
+
+  .app:not(.showcase-mode) .controls {
+    position: static;
+    transform: none;
+    z-index: auto;
+    margin: 6px 0 4px;
+    gap: 8px;
+    padding: 0;
+    border: none;
+    background: none;
+    backdrop-filter: none;
+    max-width: none;
+  }
+
+  .app:not(.showcase-mode) .btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 }
 

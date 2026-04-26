@@ -2,11 +2,10 @@ import * as React from "react";
 import { CSVLink } from "react-csv";
 
 import "./Main.css";
-import rumpumChickenSrc from "./Rumpum Chicken.png";
 import rumpumRamailoSrc from "./rumpum_ramailo.png";
-import rumpumVegSrc from "./rumpum veg.png";
 import winningAudioSrc from "./winning_audio.mpeg";
-import af from "./af_logo.png";
+import combo from "./combo.png";
+import asian from "./asian_logo.png";
 
 type DrawHistoryItem = {
   code: string;
@@ -24,6 +23,8 @@ const DEFAULT_REEL_COUNT = 7;
 const MAX_REEL_COUNT = 10;
 const MAX_DRAW_NUMBER = 1190000;
 const BULB_COUNT = 14;
+const MIN_WINNER_FLOAT_DURATION_MS = 1000;
+const MAX_WINNER_FLOAT_DURATION_MS = 20000;
 
 const Main: React.FC = () => {
   const [midDigits, setMidDigits] = React.useState<string[]>(
@@ -157,7 +158,10 @@ const Main: React.FC = () => {
     if (Number.isNaN(parsed)) {
       return 3200;
     }
-    return Math.min(12000, Math.max(1000, parsed));
+    return Math.min(
+      MAX_WINNER_FLOAT_DURATION_MS,
+      Math.max(MIN_WINNER_FLOAT_DURATION_MS, parsed),
+    );
   }, [winnerFloatDurationMs]);
 
   React.useEffect(() => {
@@ -683,18 +687,35 @@ const Main: React.FC = () => {
         return;
       }
 
-      const parsed = Number(rawValue);
-      if (!Number.isFinite(parsed)) {
+      if (!/^\d+$/.test(rawValue)) {
         setStatus("⚠ Please enter a valid winner float duration.");
         return;
       }
 
-      const normalized = Math.floor(parsed);
-      const clamped = Math.min(12000, Math.max(1000, normalized));
-      setWinnerFloatDurationMs(String(clamped));
+      setWinnerFloatDurationMs(rawValue);
     },
     [],
   );
+
+  const normalizeWinnerFloatDuration = React.useCallback((): void => {
+    if (winnerFloatDurationMs === "") {
+      setWinnerFloatDurationMs("3200");
+      return;
+    }
+
+    const parsed = Number(winnerFloatDurationMs);
+    if (!Number.isFinite(parsed)) {
+      setWinnerFloatDurationMs("3200");
+      return;
+    }
+
+    const normalized = Math.floor(parsed);
+    const clamped = Math.min(
+      MAX_WINNER_FLOAT_DURATION_MS,
+      Math.max(MIN_WINNER_FLOAT_DURATION_MS, normalized),
+    );
+    setWinnerFloatDurationMs(String(clamped));
+  }, [winnerFloatDurationMs]);
 
   const pickWinner = React.useCallback((): number => {
     const { min, max } = getRange();
@@ -1062,18 +1083,12 @@ const Main: React.FC = () => {
             id="draw-machine"
             className={`machine campaign-machine ${celebrating ? "celebrating" : ""}`}
           >
-            {/* <img
-              className="section-brand-image"
-              src={rumpumRamailoSrc}
-              alt="Rumpum Ramailo"
-              width={"120px"}
-            /> */}
             <div className="section-heading">
               <div className="section-heading-main">
                 <div className="heading-brand-group left" aria-hidden="true">
                   <img
                     className="section-brand-image af"
-                    src={af}
+                    src={asian}
                     alt="Asian Foods"
                   />
                   <img
@@ -1091,13 +1106,8 @@ const Main: React.FC = () => {
                 <div className="heading-brand-group right" aria-hidden="true">
                   <img
                     className="section-brand-image product"
-                    src={rumpumChickenSrc}
+                    src={combo}
                     alt="Rumpum Chicken Noodle"
-                  />
-                  <img
-                    className="section-brand-image product"
-                    src={rumpumVegSrc}
-                    alt="Rumpum Veg Noodle"
                   />
                 </div>
               </div>
@@ -1257,16 +1267,14 @@ const Main: React.FC = () => {
                       </label>
                       <input
                         id="winnerFloatDurationMs"
-                        type="text"
+                        type="number"
+                        min={MIN_WINNER_FLOAT_DURATION_MS}
+                        max={MAX_WINNER_FLOAT_DURATION_MS}
                         value={winnerFloatDurationMs}
                         onChange={(event) =>
                           handleWinnerFloatDurationChange(event.target.value)
                         }
-                        // onBlur={() => {
-                        //   if (winnerFloatDurationMs === "") {
-                        //     setWinnerFloatDurationMs("3200");
-                        //   }
-                        // }}
+                        onBlur={normalizeWinnerFloatDuration}
                       />
                     </div>
                     <div className="field">
