@@ -6,8 +6,9 @@
   "homepage": "https://sandurijal03.github.io/rumpum_game",
   "scripts": {
     "dev": "webpack serve --config webpack.dev.js",
-    "prod": "webpack --config webpack.prod.js",
-    "deploy": "gh-pages -d build"
+    "clean": "node -e \"require('fs').rmSync('build',{recursive:true,force:true})\"",
+    "prod": "npm run clean && webpack --config webpack.prod.js",
+    "deploy": "npm run prod && gh-pages -d build"
   },
   "keywords": [],
   "author": "",
