@@ -1523,7 +1523,7 @@ body::before {
   .app:not(.showcase-mode) .section-brand-image.product {
     width: clamp(230px, 14.8vw, 320px);
     min-width: 230px;
-    transform: scale(1.16);
+    transform: scale(1);
     transform-origin: right center;
   }
 
