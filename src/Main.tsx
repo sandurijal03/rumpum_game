@@ -911,7 +911,7 @@ const Main: React.FC = () => {
           { code, title, time: timeString },
           ...previousHistory,
         ];
-        return nextHistory.slice(0, 20);
+        return nextHistory;
       });
 
       celebrate();
